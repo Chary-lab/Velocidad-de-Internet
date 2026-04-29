@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test de Velocidad de Internet | Ping, Descarga y Subida Gratis</title>
-    <meta name="description" content="Mide tu velocidad de internet en tiempo real. Analiza tu ping, descarga y subida con nuestra herramienta gratuita y optimizada para móviles.">
+    <title>NetPulse | Test de Velocidad de Internet Profesional</title>
+    <meta name="description" content="Mide tu velocidad de internet en tiempo real. Analiza tu ping, descarga (Mbps/MBs) y subida con NetPulse.">
     <style>
         :root {
             --bg-gradient-1: #020617;
             --bg-gradient-2: #0f172a;
-            --glass-bg: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-down: #22c55e; /* Verde para descarga */
-            --accent-up: #3b82f6;   /* Azul para subida */
-            --accent-ping: #f59e0b; /* Naranja para ping */
+            --text-muted: #64748b;
+            --accent-down: #10b981; 
+            --accent-up: #3b82f6;   
+            --accent-ping: #f59e0b; 
+            --brand-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
         }
 
         body {
             margin: 0;
             min-height: 100vh;
-            background: radial-gradient(circle at top, var(--bg-gradient-2), var(--bg-gradient-1));
+            background: radial-gradient(circle at top center, var(--bg-gradient-2), var(--bg-gradient-1));
             color: var(--text-main);
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            box-sizing: border-box;
         }
 
         .container {
@@ -35,19 +37,80 @@
             max-width: 800px;
         }
 
+        /* Header Llamativo */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .brand-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
         /* Tarjeta Principal */
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
             border-radius: 32px;
             padding: 2.5rem;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-            margin-bottom: 40px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9);
+            margin-bottom: 30px;
         }
 
+        /* Toggle de Unidades (Mbps vs MB/s) */
+        .unit-toggle {
+            display: inline-flex;
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .unit-toggle button {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: auto;
+        }
+
+        .unit-toggle button.active {
+            background: var(--glass-border);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .unit-toggle small {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Grid de Resultados */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -56,138 +119,190 @@
         }
 
         .stat-card {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+            padding: 20px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease;
         }
 
-        .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; display: block; margin-top: 5px; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;}
+        .stat-value { font-size: 1.8rem; font-weight: 800; display: block; margin-top: 8px; }
+        .stat-unit { font-size: 0.9rem; font-weight: 600; opacity: 0.8; }
         
         #val-ping { color: var(--accent-ping); }
         #val-down { color: var(--accent-down); }
         #val-up { color: var(--accent-up); }
 
-        /* Medidor Central */
-        .main-meter {
-            margin: 40px 0;
-        }
+        .main-meter { margin: 20px 0 40px 0; }
+        .big-speed { font-size: 5.5rem; font-weight: 900; line-height: 1; margin: 0; color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.1); }
 
-        .big-speed {
-            font-size: 5rem;
-            font-weight: 800;
-            line-height: 1;
-            margin: 0;
-        }
-
-        /* Botón */
-        button {
+        /* Botón de Acción Principal */
+        .btn-start {
             background: #fff;
-            color: #000;
+            color: #020617;
             border: none;
-            padding: 20px 40px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            padding: 20px 0;
+            font-size: 1.1rem;
+            font-weight: 800;
             border-radius: 16px;
             cursor: pointer;
             width: 100%;
-            max-width: 300px;
-            transition: all 0.3s ease;
+            max-width: 350px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        button:hover:not(:disabled) { transform: scale(1.05); background: var(--accent-up); color: white; }
-        button:disabled { opacity: 0.5; cursor: wait; }
+        .btn-start:hover:not(:disabled) { 
+            transform: scale(1.02) translateY(-2px); 
+            box-shadow: 0 20px 40px -10px rgba(255,255,255,0.3);
+        }
+        
+        .btn-start:disabled { background: #334155; color: #94a3b8; cursor: wait; }
 
-        /* Espacios Anuncios */
+        /* Contenedor SEO con Scroll (Moderno y limpio) */
+        .seo-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            max-height: 280px; /* Altura máxima para activar el scroll */
+            overflow-y: auto;
+            scrollbar-width: thin; /* Para Firefox */
+            scrollbar-color: var(--glass-border) transparent;
+        }
+
+        /* Personalización de la barra de scroll para Chrome/Edge/Safari */
+        .seo-box::-webkit-scrollbar { width: 6px; }
+        .seo-box::-webkit-scrollbar-track { background: transparent; }
+        .seo-box::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .seo-box h2 { color: #fff; font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; }
+        .seo-box h3 { color: #e2e8f0; font-size: 1rem; margin-top: 25px; margin-bottom: 10px; }
+        .seo-box p { color: #94a3b8; font-size: 0.9rem; line-height: 1.7; margin-bottom: 15px; }
+        .seo-box strong { color: #cbd5e1; }
+
         .ad-banner {
-            width: 100%;
-            height: 100px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #475569;
-            border: 1px dashed #334155;
+            width: 100%; height: 90px; background: rgba(0,0,0,0.4); border-radius: 12px; margin: 20px 0;
+            display: flex; align-items: center; justify-content: center; color: #475569; border: 1px dashed #334155;
+            font-size: 0.8rem; letter-spacing: 1px;
         }
-
-        /* Sección de SEO */
-        .seo-content {
-            text-align: left;
-            line-height: 1.6;
-            color: #cbd5e1;
-            margin-top: 50px;
-        }
-
-        .seo-content h2 { color: #fff; margin-top: 30px; }
-        .seo-content p { margin-bottom: 15px; }
 
         @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .big-speed { font-size: 3.5rem; }
+            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+            .brand-title { font-size: 2.2rem; }
+            .big-speed { font-size: 4rem; }
+            .seo-box { max-height: 350px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="ad-banner">Espacio para Anuncio Superior</div>
+    <header>
+        <h1 class="brand-title">NetPulse</h1>
+        <div class="brand-subtitle">Diagnosticador de Red Pro</div>
+    </header>
+
+    <div class="ad-banner">ESPACIO PUBLICITARIO (ADSENSE)</div>
 
     <div class="glass-panel">
-        <h1>Test de Velocidad Pro</h1>
         
+        <div class="unit-toggle">
+            <button id="btn-mbps" class="active" onclick="switchUnit('mbps')">
+                Mbps <small>Red de Operadora</small>
+            </button>
+            <button id="btn-mbs" onclick="switchUnit('mbs')">
+                MB/s <small>Descarga Real</small>
+            </button>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
-                <span class="stat-label">Ping</span>
-                <span class="stat-value" id="val-ping">0 <small>ms</small></span>
+                <span class="stat-label">Latencia</span>
+                <span class="stat-value" id="val-ping">--</span>
+                <span class="stat-unit" style="color: var(--accent-ping)">ms</span>
             </div>
             <div class="stat-card">
                 <span class="stat-label">Descarga</span>
-                <span class="stat-value" id="val-down">0.0 <small>Mb</small></span>
+                <span class="stat-value" id="val-down">0.0</span>
+                <span class="stat-unit unit-label" style="color: var(--accent-down)">Mbps</span>
             </div>
             <div class="stat-card">
                 <span class="stat-label">Subida</span>
-                <span class="stat-value" id="val-up">0.0 <small>Mb</small></span>
+                <span class="stat-value" id="val-up">0.0</span>
+                <span class="stat-unit unit-label" style="color: var(--accent-up)">Mbps</span>
             </div>
         </div>
 
         <div class="main-meter">
-            <p id="current-task" style="color: var(--text-muted); margin-bottom: 10px;">Listo para analizar</p>
+            <p id="current-task" style="color: var(--text-muted); margin-bottom: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Estado: En espera</p>
             <h2 class="big-speed" id="main-display">0.0</h2>
-            <p style="letter-spacing: 5px; color: var(--text-muted);">MBPS</p>
+            <p class="unit-label" style="letter-spacing: 4px; color: var(--text-muted); margin-top: 10px; font-weight: 700;">MBPS</p>
         </div>
 
-        <button id="start-btn" onclick="runFullTest()">INICIAR TEST</button>
+        <button id="start-btn" class="btn-start" onclick="runFullTest()">Ejecutar Diagnóstico</button>
     </div>
 
-    <div class="ad-banner">Espacio para Anuncio Inferior</div>
+    <div class="seo-box">
+        <h2>El motor detrás de tu conexión</h2>
+        <p>No todas las conexiones son iguales. NetPulse está diseñado para darte datos precisos sin filtros de caché. Nuestro algoritmo satura momentáneamente tu ancho de banda para medir el tope real de tu <strong>fibra óptica</strong> o red móvil, diferenciando entre la velocidad comercial (Megabits) y la velocidad de descarga pura (Megabytes).</p>
 
-    <article class="seo-content">
-        <h2>¿Cómo funciona nuestro test de velocidad de internet?</h2>
-        <p>Nuestra herramienta realiza un análisis exhaustivo de tu conexión midiendo los tres parámetros fundamentales: <strong>Latencia (Ping)</strong>, <strong>Velocidad de Descarga</strong> y <strong>Velocidad de Subida</strong>. Utilizamos servidores de alta disponibilidad para garantizar que los resultados reflejen la capacidad real de tu fibra óptica o conexión móvil.</p>
+        <h3>¿Mbps o MB/s? La trampa de las operadoras</h3>
+        <p>Las compañías de internet te venden la velocidad en <strong>Mbps (Megabits)</strong>, pero cuando descargas un parche pesado de un juego o un archivo de video, tu sistema lo lee en <strong>MB/s (Megabytes)</strong>. La regla es simple: 1 Byte equivale a 8 bits. Si tienes contratados 100 Mbps, tu descarga máxima real rondará los 12.5 MB/s. Usa nuestro selector superior para descubrir tu velocidad de descarga real sin hacer matemáticas.</p>
 
-        <h2>¿Qué es un buen resultado de Mbps?</h2>
-        <p>Dependiendo de tus actividades diarias, tus necesidades pueden variar:</p>
-        <ul>
-            <li><strong>Navegación básica:</strong> 10-25 Mbps.</li>
-            <li><strong>Streaming 4K y Videojuegos:</strong> 50-100 Mbps.</li>
-            <li><strong>Creadores de contenido (Streaming en vivo):</strong> Necesitas al menos 10-20 Mbps de <strong>subida</strong> constante.</li>
-        </ul>
+        <h3>Ping: El verdugo de las Rankeds</h3>
+        <p>Tener 500 Mbps no sirve de nada si tu latencia es inestable. El ping mide en milisegundos (ms) la respuesta entre tu equipo y el servidor. Un ping inferior a 40ms es la zona de confort para juegos competitivos; cualquier pico por encima de eso y empezarás a ver jugadores teletransportándose o sufrirás desconexiones fatales en medio de la partida. Si tu ping es alto, abandona el WiFi y conecta un cable Ethernet directo al router.</p>
 
-        <h2>¿Por qué es importante el Ping para los gamers?</h2>
-        <p>El ping o latencia mide el tiempo que tarda un paquete de datos en ir y volver de tu ordenador al servidor. Para jugadores de títulos como League of Legends o Valorant, un ping menor a 40ms es ideal. Una latencia alta provoca el famoso "lag", afectando tu rendimiento en partidas competitivas.</p>
+        <h3>Subida: La clave para Creadores de Contenido</h3>
+        <p>Para emitir directos a 1080p60fps sin perder *frames* o que el bitrate colapse tu stream, necesitas una velocidad de subida sólida y constante. Una velocidad de carga superior a 15 Mbps te garantiza que tus overlays, el gameplay y tu cámara lleguen a la plataforma en calidad cristalina.</p>
+    </div>
 
-        <h2>Consejos para mejorar tu velocidad WiFi</h2>
-        <p>Si tu test arroja resultados bajos, intenta acercarte al router, evitar obstáculos físicos o conectar tu equipo mediante un cable Ethernet para eliminar interferencias de señal.</p>
-    </article>
+    <div class="ad-banner">ESPACIO PUBLICITARIO (ADSENSE)</div>
 </div>
 
 <script>
-    // URLs de prueba (Usamos assets públicos pesados para medir)
     const downloadImg = "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=4000&q=100";
     const uploadEndpoint = "https://httpbin.org/post";
+
+    // Variables de estado
+    let currentUnit = 'mbps';
+    let rawDownMbps = 0.0;
+    let rawUpMbps = 0.0;
+    let isTesting = false;
+
+    // Cambiar Unidades
+    function switchUnit(unit) {
+        currentUnit = unit;
+        
+        // Actualizar UI de botones
+        document.getElementById('btn-mbps').classList.toggle('active', unit === 'mbps');
+        document.getElementById('btn-mbs').classList.toggle('active', unit === 'mbs');
+        
+        // Actualizar etiquetas de texto
+        const labels = document.querySelectorAll('.unit-label');
+        labels.forEach(label => label.innerText = unit === 'mbps' ? 'Mbps' : 'MB/s');
+
+        // Actualizar valores en pantalla si ya hay resultados
+        if (!isTesting) {
+            updateDisplayValues(rawDownMbps, rawUpMbps);
+        }
+    }
+
+    function updateDisplayValues(down, up) {
+        const factor = currentUnit === 'mbps' ? 1 : 8;
+        
+        document.getElementById('val-down').innerText = down > 0 ? (down / factor).toFixed(1) : "0.0";
+        document.getElementById('val-up').innerText = up > 0 ? (up / factor).toFixed(1) : "0.0";
+        
+        // El display principal muestra la descarga al finalizar
+        if(down > 0) {
+            document.getElementById('main-display').innerText = (down / factor).toFixed(1);
+        }
+    }
 
     async function runFullTest() {
         const btn = document.getElementById('start-btn');
@@ -195,30 +310,39 @@
         const taskText = document.getElementById('current-task');
         
         btn.disabled = true;
+        isTesting = true;
+        rawDownMbps = 0;
+        rawUpMbps = 0;
         
-        // 1. TEST DE PING
-        taskText.innerText = "Midiendo Latencia (Ping)...";
+        // 1. PING
+        taskText.innerText = "Calculando Latencia...";
         const ping = await measurePing();
-        document.getElementById('val-ping').innerHTML = `${ping} <small>ms</small>`;
+        document.getElementById('val-ping').innerText = ping;
 
-        // 2. TEST DE DESCARGA
-        taskText.innerText = "Analizando Descarga...";
-        const downloadSpeed = await measureDownload((s) => {
-            mainDisp.innerText = s;
-            document.getElementById('val-down').innerHTML = `${s} <small>Mb</small>`;
+        // 2. DESCARGA
+        taskText.innerText = "Saturando canal de descarga...";
+        const factor = currentUnit === 'mbps' ? 1 : 8;
+        
+        rawDownMbps = await measureDownload((currentMbps) => {
+            const displayValue = (currentMbps / factor).toFixed(1);
+            mainDisp.innerText = displayValue;
+            document.getElementById('val-down').innerText = displayValue;
         });
 
-        // 3. TEST DE SUBIDA
-        taskText.innerText = "Analizando Subida...";
-        const uploadSpeed = await measureUpload((s) => {
-            mainDisp.innerText = s;
-            document.getElementById('val-up').innerHTML = `${s} <small>Mb</small>`;
+        // 3. SUBIDA
+        taskText.innerText = "Verificando canal de subida...";
+        rawUpMbps = await measureUpload((currentMbps) => {
+            const displayValue = (currentMbps / factor).toFixed(1);
+            mainDisp.innerText = displayValue;
+            document.getElementById('val-up').innerText = displayValue;
         });
 
-        taskText.innerText = "Análisis completado";
-        mainDisp.innerText = downloadSpeed;
+        // FIN
+        taskText.innerText = "Diagnóstico finalizado";
+        isTesting = false;
+        updateDisplayValues(rawDownMbps, rawUpMbps); // Asegura consistencia
         btn.disabled = false;
-        btn.innerText = "REPETIR TEST";
+        btn.innerText = "REPETIR DIAGNÓSTICO";
     }
 
     async function measurePing() {
@@ -238,29 +362,23 @@
             if (done) break;
             loaded += value.length;
             const duration = (performance.now() - startTime) / 1000;
-            const mbps = ((loaded * 8) / (1024 * 1024) / duration).toFixed(1);
+            const mbps = ((loaded * 8) / (1024 * 1024) / duration);
             updateUI(mbps);
         }
-        return ((loaded * 8) / (1024 * 1024) / ((performance.now() - startTime) / 1000)).toFixed(1);
+        return ((loaded * 8) / (1024 * 1024) / ((performance.now() - startTime) / 1000));
     }
 
     async function measureUpload(updateUI) {
-        // Creamos un paquete de datos dummy de 2MB
         const data = new Blob([new ArrayBuffer(2 * 1024 * 1024)]); 
         const startTime = performance.now();
-        
         try {
-            await fetch(uploadEndpoint, {
-                method: 'POST',
-                body: data,
-                mode: 'cors'
-            });
+            await fetch(uploadEndpoint, { method: 'POST', body: data, mode: 'cors' });
             const duration = (performance.now() - startTime) / 1000;
-            const mbps = ((data.size * 8) / (1024 * 1024) / duration).toFixed(1);
+            const mbps = ((data.size * 8) / (1024 * 1024) / duration);
             updateUI(mbps);
             return mbps;
         } catch (e) {
-            return "0.0";
+            return 0.0;
         }
     }
 </script>
