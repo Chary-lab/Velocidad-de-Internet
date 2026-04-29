@@ -2,12 +2,207 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Velocidad de Internet</title>
+    <title>Test de Velocidad Dinámico</title>
+    <style>
+        :root {
+            --bg-gradient-1: #0f172a;
+            --bg-gradient-2: #1e1b4b;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .meter-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .meter-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .meter-ring.active {
+            border-top-color: var(--accent);
+            border-right-color: var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .speed-value {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        .speed-unit {
+            font-size: 1rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.7);
+        }
+        button:disabled {
+            background: #334155;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .ad-space {
+            width: 100%;
+            min-height: 90px;
+            background: rgba(0,0,0,0.3);
+            border: 1px dashed var(--glass-border);
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .status {
+            margin-top: 15px;
+            height: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        @media (max-width: 480px) {
+            .glass-panel { padding: 1.5rem; }
+            .meter-container { width: 180px; height: 180px; }
+            .speed-value { font-size: 2.5rem; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido a la aplicación de Velocidad de Internet</h1>
-    <p>Esto es un ejemplo de contenido del archivo gemini-code-1777503512957.html</p>
+    <div class="glass-panel">
+        <h1>Test de Velocidad</h1>
+        <p class="subtitle">Comprueba tu conexión en tiempo real</p>
+        <div class="ad-space">Espacio Anuncio Responsive</div>
+        <div class="meter-container">
+            <div class="meter-ring" id="ring"></div>
+            <div class="speed-value" id="speed-value">0.00</div>
+            <div class="speed-unit">Mbps</div>
+        </div>
+        <button id="start-btn" onclick="startDynamicTest()">Iniciar Análisis</button>
+        <div class="status" id="status-text">Listo para iniciar</div>
+        <div class="ad-space">Espacio Anuncio Responsive</div>
+    </div>
+    <script>
+    // Url directa a la imagen que subiste al repo
+    const imageUrl = "https://chary-lab.github.io/Velocidad-de-Internet/edificio.jpg";
+    async function startDynamicTest() {
+        const btn = document.getElementById('start-btn');
+        const speedValueText = document.getElementById('speed-value');
+        const statusText = document.getElementById('status-text');
+        const ring = document.getElementById('ring');
+        btn.disabled = true;
+        btn.innerText = "Analizando...";
+        statusText.innerText = "Midiendo descarga en vivo...";
+        speedValueText.innerText = "0.00";
+        ring.classList.add('active');
+        const cacheBuster = "?nnn=" + new Date().getTime();
+        const downloadSrc = imageUrl + cacheBuster;
+        try {
+            const response = await fetch(downloadSrc, {cache: "no-store"});
+            if (!response.ok) throw new Error("Error de conexión");
+            const reader = response.body.getReader();
+            let receivedBytes = 0;
+            const startTime = performance.now();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                receivedBytes += value.length;
+                const currentTime = performance.now();
+                const durationInSeconds = Math.max((currentTime - startTime) / 1000, 0.01);
+                const speedMbps = ((receivedBytes * 8) / (1024 * 1024) / durationInSeconds).toFixed(2);
+                speedValueText.innerText = speedMbps;
+            }
+            statusText.innerText = "¡Prueba completada!";
+        } catch (error) {
+            speedValueText.innerText = "Error";
+            statusText.innerText = "Conexión fallida. Revisa tu red o la URL de la imagen.";
+            console.error(error);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Volver a analizar";
+            ring.classList.remove('active');
+        }
+    }
+    </script>
 </body>
 </html>
