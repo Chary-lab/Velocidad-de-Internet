@@ -193,7 +193,6 @@
         </div>
         <div class="card-custom" id="analysisCard" style="display:none;"><h2>🧠 Análisis inteligente</h2><div id="analysisContent"></div></div>
         <div class="card-custom" id="comparisonCard" style="display:none;"><h2>🌎 Comparativa nacional</h2><div id="comparisonContent"></div></div>
-        <div class="card-custom"><h2>📶 Capacidad del enlace</h2><small>Streaming</small><div class="progress mb-2"><div class="progress-bar" id="streamBar">--</div></div><small>Gaming</small><div class="progress"><div class="progress-bar" id="gameBar">--</div></div></div>
         <div class="card-custom"><h2>📱 Requerimientos de apps populares</h2><table class="table table-sm table-borderless small mb-0"><thead><tr><th>Aplicación</th><th>Calidad</th><th>Descarga</th><th>Subida</th><th>Tu conexión</th></tr></thead><tbody><tr><td>Netflix</td><td>4K</td><td>25 Mbps</td><td>-</td><td id="appNetflix">-</td></tr><tr><td>YouTube</td><td>4K</td><td>20 Mbps</td><td>-</td><td id="appYoutube">-</td></tr><tr><td>Zoom</td><td>HD</td><td>3.8 Mbps</td><td>3.8 Mbps</td><td id="appZoom">-</td></tr><tr><td>Twitch</td><td>1080p</td><td>6 Mbps</td><td>-</td><td id="appTwitch">-</td></tr><tr><td>GeForce Now</td><td>4K</td><td>45 Mbps</td><td>-</td><td id="appGeForce">-</td></tr></tbody></table></div>
 
         <section class="card-custom faq-section" aria-labelledby="faq-heading">
@@ -293,19 +292,12 @@
         try{setText('testStatus',t('dl')+` (${p.dlT} hilos)...`);$('progressWrapper').hidden=!1;let r=await multiDL(p.dlT,p.dlS,s=>updateLiveChart(s));dl=r.avgSpeed;setText('dlVal',dl.toFixed(1));setText('mainSpeed',dl.toFixed(0)+' Mbps');loaded=await loadedPing(4);ok++}catch{setText('dlVal','Err')}finally{$('progressWrapper').hidden=!0}
         try{setText('testStatus',t('ul')+'...');$('progressWrapper').hidden=!1;let data=new Uint8Array(p.ulS);for(let i=0;i<p.ulS;i++)data[i]=Math.random()*256;let r=await streamingUL('https://speed.cloudflare.com/__up',data.buffer,p=>progress('progressBar',p),s=>updateLiveChart(s));ul=r.avgSpeed;setText('ulVal',ul.toFixed(1));setText('mainSpeed',ul.toFixed(0)+' Mbps');ok++}catch{setText('ulVal','N/D')}finally{$('progressWrapper').hidden=!0}
         g.classList.remove('active');btn.disabled=!1;btn.textContent=t('start');show('liveSpeedChart',!1);setText('testStatus',ok>=2?t('done'):t('err'));
-        if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);updateBars(dl);updateGamePingsReal(idle);genAnalysis(idle,jitter,dl,ul,loaded);genCompare(dl,ul);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0;updateBars(0)}
+        if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);genAnalysis(idle,jitter,dl,ul,loaded);genCompare(dl,ul);updateGamePingsReal(idle);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0}
       }
 
       async function updateGamePingsReal(basePing){
         const endpoints={pingLol:'https://www.leagueoflegends.com',pingCod:'https://www.callofduty.com',pingGta:'https://www.rockstargames.com'};
         for (let [id,url] of Object.entries(endpoints)){try{let start=performance.now();await fetch(url,{method:'HEAD',mode:'no-cors',cache:'no-store'});setText(id,Math.round(performance.now()-start)+' ms')}catch{if(id==='pingLol')setText(id,Math.round(basePing+random(15,25))+' ms');else if(id==='pingCod')setText(id,Math.round(basePing+random(25,40))+' ms');else if(id==='pingGta')setText(id,Math.round(basePing+random(35,50))+' ms')}}
-      }
-
-      function updateBars(s){let sl=0,gl=0;if(s>=25)sl=4;else if(s>=15)sl=3;else if(s>=5)sl=2;else if(s>0)sl=1;if(s>=15)gl=3;else if(s>=5)gl=2;else if(s>0)gl=1;
-        requestAnimationFrame(()=>{
-          $('streamBar').style.width=(sl*25)+'%';$('gameBar').style.width=(gl*33.33)+'%';
-          $('streamBar').textContent=s>0?['','SD','HD','4K','4K/8K'][sl]:'--';$('gameBar').textContent=s>0?['','MALO','REGULAR','ÓPTIMO'][gl]:'--';
-        });
       }
 
       function genAnalysis(ping,jit,dl,ul,loaded){
@@ -356,9 +348,9 @@
         $('langToggle').textContent=lang==='es'?'🌐 ES':'🌐 EN';$('startBtn').textContent=t('start');$('fastModeLabel').innerHTML=t('fast_mode')+' <span class="help-icon" data-bs-toggle="tooltip" title="Prueba ligera">?</span>';
         setText('connType',detectConnType());
         setTimeout(detectISP,2000);
-        renderHist();initChart();updateBars(0);
+        renderHist();initChart();
         $('startBtn').addEventListener('click',runTest);
-        $('resetBtn').addEventListener('click',()=>{['pingVal','jitterVal','dlVal','ulVal','mainSpeed','testStatus'].forEach(id=>setText(id,'--'));$('gauge').classList.remove('active');$('startBtn').disabled=!1;$('progressWrapper').hidden=!0;show('liveSpeedChart',!1);$('analysisCard').style.display='none';$('comparisonCard').style.display='none';updateBars(0);$('shareBtn').disabled=!0;['pingLol','pingCod','pingGta'].forEach(id=>setText(id,'-- ms'));['appNetflix','appYoutube','appZoom','appTwitch','appGeForce'].forEach(id=>setText(id,'-'))});
+        $('resetBtn').addEventListener('click',()=>{['pingVal','jitterVal','dlVal','ulVal','mainSpeed','testStatus'].forEach(id=>setText(id,'--'));$('gauge').classList.remove('active');$('startBtn').disabled=!1;$('progressWrapper').hidden=!0;show('liveSpeedChart',!1);$('analysisCard').style.display='none';$('comparisonCard').style.display='none';$('shareBtn').disabled=!0;['pingLol','pingCod','pingGta'].forEach(id=>setText(id,'-- ms'));['appNetflix','appYoutube','appZoom','appTwitch','appGeForce'].forEach(id=>setText(id,'-'))});
         $('fastModeSwitch').addEventListener('change',e=>{isFast=e.target.checked});
         $('themeToggle').addEventListener('click',toggleTheme);
         $('langToggle').addEventListener('click',toggleLang);
