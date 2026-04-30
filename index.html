@@ -14,7 +14,7 @@
             --bg-dark: #020617;
             --glass: rgba(255, 255, 255, 0.03);
             --accent: #3b82f6;
-            --text-muted: #94a3b8;
+            --text-label: #94a3b8;
         }
 
         body {
@@ -56,6 +56,19 @@
             margin-bottom: 30px;
         }
 
+        /* Medidores Principales con Etiquetas Corregidas */
+        .label-text {
+            color: var(--text-label);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .value-text { font-size: 1rem; font-weight: 700; }
+
         .btn-pulse {
             background: linear-gradient(45deg, #2563eb, #3b82f6);
             border: none;
@@ -65,38 +78,20 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
-            transition: 0.3s;
         }
 
-        .btn-pulse:hover {
-            transform: scale(1.03);
-            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.5);
-        }
-
-        /* Tarjetas de diagnóstico con contraste corregido */
+        /* Diagnóstico con Contraste */
         .diag-card {
             background: rgba(255, 255, 255, 0.07);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 24px;
             padding: 20px;
             height: 100%;
-            transition: 0.3s;
         }
+        .diag-title { color: #ffffff !important; font-weight: 700; margin-top: 10px; }
+        .diag-desc { color: #e2e8f0 !important; font-size: 0.75rem; line-height: 1.4; margin-top: 5px; }
 
-        .diag-title {
-            color: #ffffff !important;
-            font-weight: 700;
-            margin-top: 10px;
-        }
-
-        .diag-desc {
-            color: #e2e8f0 !important;
-            font-size: 0.75rem;
-            line-height: 1.4;
-            margin-top: 5px;
-        }
-
-        /* Gaming Hub Modal Styles */
+        /* Gaming Hub: Corrección de Pings Invisibles */
         .modal-content {
             background: #0f172a !important;
             border: 1px solid rgba(59, 130, 246, 0.5) !important;
@@ -115,6 +110,17 @@
         }
 
         .game-name { color: #fff; font-weight: 600; font-size: 0.9rem; }
+
+        /* Estilo forzado para que el número de Ping se vea */
+        .ping-badge {
+            min-width: 65px;
+            text-align: center;
+            font-weight: 800 !important;
+            font-size: 0.8rem !important;
+            padding: 6px 10px !important;
+            color: #ffffff !important;
+            border-radius: 8px;
+        }
 
         .progress { height: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; }
         .progress-bar { border-radius: 20px; box-shadow: 0 0 15px currentColor; }
@@ -145,20 +151,20 @@
 
                 <div class="row g-0 py-3 border-top border-bottom border-white border-opacity-10 mb-4">
                     <div class="col-3 border-end border-white border-opacity-10">
-                        <small class="text-muted d-block" style="font-size: 0.65rem;">PING</small>
-                        <span id="pPing" class="fw-bold text-warning" style="font-size: 0.9rem;">--</span>
+                        <span class="label-text">Ping</span>
+                        <span id="pPing" class="value-text text-warning">--</span>
                     </div>
                     <div class="col-3 border-end border-white border-opacity-10">
-                        <small class="text-muted d-block" style="font-size: 0.65rem;">SUBIDA</small>
-                        <span id="pUp" class="fw-bold text-info" style="font-size: 0.9rem;">--</span>
+                        <span class="label-text">Subida</span>
+                        <span id="pUp" class="value-text text-info">--</span>
                     </div>
                     <div class="col-3 border-end border-white border-opacity-10">
-                        <small class="text-muted d-block" style="font-size: 0.65rem;">JITTER</small>
-                        <span id="pJitter" class="fw-bold text-success" style="font-size: 0.9rem;">--</span>
+                        <span class="label-text">Jitter</span>
+                        <span id="pJitter" class="value-text text-success">--</span>
                     </div>
                     <div class="col-3">
-                        <small class="text-muted d-block" style="font-size: 0.65rem;">ESTADO</small>
-                        <span class="fw-bold text-success" style="font-size: 0.9rem;"><i class="bi bi-shield-check"></i></span>
+                        <span class="label-text">Estado</span>
+                        <span class="value-text text-success"><i class="bi bi-shield-check"></i></span>
                     </div>
                 </div>
 
@@ -171,18 +177,16 @@
         <div class="col-lg-7 col-md-10">
             <div class="glass-card text-start">
                 <h6 class="text-uppercase fw-bold mb-4" style="font-size: 0.7rem; color: var(--accent); letter-spacing: 2px;">Capacidad del Enlace</h6>
-                
                 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold text-white"><i class="bi bi-hd-fill me-2 text-info"></i>Streaming 4K / 8K</span>
+                        <span class="small fw-bold text-white">Streaming 4K / 8K</span>
                         <span id="l-stream" class="badge bg-dark text-muted">ESPERANDO</span>
                     </div>
                     <div class="progress"><div id="b-stream" class="progress-bar bg-info" style="width: 0%"></div></div>
                 </div>
-
                 <div class="mb-2">
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold text-white"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Gaming Competitivo</span>
+                        <span class="small fw-bold text-white">Gaming Competitivo</span>
                         <span id="l-game" class="badge bg-dark text-muted">ESPERANDO</span>
                     </div>
                     <div class="progress"><div id="b-game" class="progress-bar bg-warning text-dark" style="width: 0%"></div></div>
@@ -191,29 +195,27 @@
         </div>
 
         <div class="col-lg-7 col-md-10">
-            <div class="text-start mb-3 px-2">
-                <h5 class="fw-bold text-white small text-uppercase" style="letter-spacing: 1px;">Diagnóstico Profesional</h5>
-            </div>
+            <div class="text-start mb-3 px-2"><h5 class="fw-bold text-white small text-uppercase">Diagnóstico Profesional</h5></div>
             <div class="row g-3">
                 <div class="col-md-4">
                     <div class="diag-card text-start">
                         <i class="bi bi-clock-history text-primary"></i>
                         <div class="diag-title small">Latencia</div>
-                        <div class="diag-desc">Tiempo de respuesta entre tu red y los servidores.</div>
+                        <div class="diag-desc">Mide el retraso de ida y vuelta de los datos.</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="diag-card text-start">
                         <i class="bi bi-cloud-arrow-up text-info"></i>
                         <div class="diag-title small">Subida</div>
-                        <div class="diag-desc">Capacidad para enviar archivos y transmitir datos.</div>
+                        <div class="diag-desc">Velocidad para enviar archivos o transmitir.</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="diag-card text-start">
                         <i class="bi bi-reception-4 text-warning"></i>
                         <div class="diag-title small">Estabilidad</div>
-                        <div class="diag-desc">Consistencia del flujo de datos sin micro-cortes.</div>
+                        <div class="diag-desc">Consistencia de la señal sin pérdidas de datos.</div>
                     </div>
                 </div>
             </div>
@@ -231,15 +233,15 @@
             <div class="modal-body p-4">
                 <div class="game-row">
                     <span class="game-name">League of Legends</span>
-                    <span class="badge bg-success bg-opacity-20 text-success border border-success">25 ms</span>
+                    <span class="badge ping-badge bg-success">25 ms</span>
                 </div>
                 <div class="game-row">
                     <span class="game-name">Call of Duty</span>
-                    <span class="badge bg-success bg-opacity-20 text-success border border-success">48 ms</span>
+                    <span class="badge ping-badge bg-success">48 ms</span>
                 </div>
                 <div class="game-row">
                     <span class="game-name">GTA V RP</span>
-                    <span class="badge bg-info bg-opacity-20 text-info border border-info">32 ms</span>
+                    <span class="badge ping-badge bg-info">32 ms</span>
                 </div>
             </div>
         </div>
@@ -257,16 +259,13 @@
             try {
                 const response = await fetch(api);
                 const data = await response.json();
-                const isp = data.org || data.isp;
-                if (isp) {
-                    ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${isp}`;
-                    locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> ${data.city || 'Ubicación'}, ${data.country_code || data.countryCode}`;
+                if (data.isp || data.org) {
+                    ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${data.isp || data.org}`;
+                    locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> ${data.city || 'Ubicación'}`;
                     return; 
                 }
             } catch (e) { continue; }
         }
-        ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> Red Detectada`;
-        locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> Acceso Global`;
     }
 
     getNetInfo();
@@ -280,7 +279,6 @@
         const timer = setInterval(() => {
             s += Math.random() * 9.8;
             document.getElementById('speedValue').innerText = s.toFixed(1);
-            
             const p = Math.min((s / 65) * 100, 100);
             document.getElementById('b-stream').style.width = p + '%';
             document.getElementById('b-game').style.width = Math.min(p * 1.1, 100) + '%';
