@@ -246,7 +246,7 @@
 
       function updateGamePings(base) {
       const items = document.querySelectorAll('#gameList li span');
-       if (items.length) {
+      if (items.length) {
       items[0].textContent = Math.round(base + random(15, 25)) + ' ms';
       items[1].textContent = Math.round(base + random(25, 40)) + ' ms';
       items[2].textContent = Math.round(base + random(35, 50)) + ' ms';
