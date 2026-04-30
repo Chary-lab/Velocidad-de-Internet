@@ -192,8 +192,7 @@
           </div>
         </div>
         <div class="card-custom" id="analysisCard" style="display:none;"><h2>🧠 Análisis inteligente</h2><div id="analysisContent"></div></div>
-        <div class="card-custom" id="comparisonCard" style="display:none;"><h2>🌎 Comparativa nacional</h2><div id="comparisonContent"></div></div>
-        <div class="card-custom"><h2>📱 Requerimientos de apps populares</h2><table class="table table-sm table-borderless small mb-0"><thead><tr><th>Aplicación</th><th>Calidad</th><th>Descarga</th><th>Subida</th><th>Tu conexión</th></tr></thead><tbody><tr><td>Netflix</td><td>4K</td><td>25 Mbps</td><td>-</td><td id="appNetflix">-</td></tr><tr><td>YouTube</td><td>4K</td><td>20 Mbps</td><td>-</td><td id="appYoutube">-</td></tr><tr><td>Zoom</td><td>HD</td><td>3.8 Mbps</td><td>3.8 Mbps</td><td id="appZoom">-</td></tr><tr><td>Twitch</td><td>1080p</td><td>6 Mbps</td><td>-</td><td id="appTwitch">-</td></tr><tr><td>GeForce Now</td><td>4K</td><td>45 Mbps</td><td>-</td><td id="appGeForce">-</td></tr></tbody></table></div>
+        <div class="card-custom"><h2>📱 Requerimientos de apps populares</h2><table class="table table-sm table-borderless small mb-0"><thead><tr><th>Aplicación</th><th>Calidad</th><th>Descarga</th><th>Subida</th><th>Tu conexión</th></tr></thead><tbody><tr><td>Netflix</td><td>4K</td><td>25 Mbps</td><td>-</td><td id="appNetflix">-</td></tr><tr><td>YouTube</td><td>4K</td><td>20 Mbps</td><td>-</td><td id="appYoutube">-</td></tr><tr><td>Twitch</td><td>1080p</td><td>6 Mbps</td><td>-</td><td id="appTwitch">-</td></tr><tr><td>GeForce Now</td><td>4K</td><td>45 Mbps</td><td>-</td><td id="appGeForce">-</td></tr></tbody></table></div>
 
         <section class="card-custom faq-section" aria-labelledby="faq-heading">
           <h2 id="faq-heading">❓ Preguntas Frecuentes sobre el Test de Velocidad de Internet</h2>
@@ -286,13 +285,13 @@
         // Cargar Chart.js solo ahora
         if (!window.Chart) await loadChartJS();
         let btn=$('startBtn'),g=$('gauge');btn.disabled=!0;btn.textContent=t('starting');g.classList.add('active');$('progressWrapper').hidden=!0;show('liveSpeedChart',!0);resetLiveChart();
-        ['pingVal','jitterVal','dlVal','ulVal','mainSpeed'].forEach(id=>setText(id,'--'));setText('testStatus','');$('analysisCard').style.display='none';$('comparisonCard').style.display='none';
+        ['pingVal','jitterVal','dlVal','ulVal','mainSpeed'].forEach(id=>setText(id,'--'));setText('testStatus','');$('analysisCard').style.display='none';
         let p=params(),ping=0,jitter=0,dl=0,ul=0,idle=0,loaded=0,ok=0;
         try{setText('testStatus',t('ping')+'...');let r=await pingTest(p.pingA);idle=r.avg;jitter=r.jitter;setText('pingVal',idle.toFixed(0));setText('jitterVal',jitter.toFixed(1));setText('mainSpeed',idle.toFixed(0)+' ms');ok++}catch{setText('pingVal','Err')}
         try{setText('testStatus',t('dl')+` (${p.dlT} hilos)...`);$('progressWrapper').hidden=!1;let r=await multiDL(p.dlT,p.dlS,s=>updateLiveChart(s));dl=r.avgSpeed;setText('dlVal',dl.toFixed(1));setText('mainSpeed',dl.toFixed(0)+' Mbps');loaded=await loadedPing(4);ok++}catch{setText('dlVal','Err')}finally{$('progressWrapper').hidden=!0}
         try{setText('testStatus',t('ul')+'...');$('progressWrapper').hidden=!1;let data=new Uint8Array(p.ulS);for(let i=0;i<p.ulS;i++)data[i]=Math.random()*256;let r=await streamingUL('https://speed.cloudflare.com/__up',data.buffer,p=>progress('progressBar',p),s=>updateLiveChart(s));ul=r.avgSpeed;setText('ulVal',ul.toFixed(1));setText('mainSpeed',ul.toFixed(0)+' Mbps');ok++}catch{setText('ulVal','N/D')}finally{$('progressWrapper').hidden=!0}
         g.classList.remove('active');btn.disabled=!1;btn.textContent=t('start');show('liveSpeedChart',!1);setText('testStatus',ok>=2?t('done'):t('err'));
-        if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);genAnalysis(idle,jitter,dl,ul,loaded);genCompare(dl,ul);updateGamePingsReal(idle);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0}
+        if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);genAnalysis(idle,jitter,dl,ul,loaded);updateGamePingsReal(idle);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0}
       }
 
       async function updateGamePingsReal(basePing){
@@ -313,10 +312,7 @@
         $('analysisCard').style.display='block'
       }
 
-      const speeds={ES:{dl:150,ul:130},US:{dl:220,ul:30},GB:{dl:90,ul:30},DE:{dl:80,ul:25},FR:{dl:120,ul:50},IT:{dl:60,ul:20},BR:{dl:40,ul:15},MX:{dl:30,ul:10},AR:{dl:35,ul:8},CO:{dl:25,ul:7},CL:{dl:45,ul:12},PE:{dl:30,ul:8},VE:{dl:20,ul:5},default:{dl:50,ul:20}};
-      async function genCompare(dl,ul){try{let r=await fetch('https://geolocation-db.com/json/'),d=await r.json(),c=d.country_code||'',cn=d.country_name||'tu país',s=speeds[c]||speeds.default,dp=Math.min(100,Math.round(dl/s.dl*100)),up=Math.min(100,Math.round(ul/s.ul*100));$('comparisonContent').innerHTML=`<p>Media en <strong>${cn}</strong>: ⬇${s.dl} ⬆${s.ul} Mbps</p><div class="mb-2"><small>Descarga vs media</small><div class="progress"><div class="progress-bar" style="width:${dp}%">${dl.toFixed(1)} Mbps</div></div></div><div><small>Subida vs media</small><div class="progress"><div class="progress-bar" style="width:${up}%">${ul.toFixed(1)} Mbps</div></div></div>`;$('comparisonCard').style.display='block'}catch(e){$('comparisonCard').style.display='none'}}
-
-      function updateAppTable(dl,ul){const check=(rd,ru)=>((dl>=rd)&&(ru?ul>=ru:!0)?'✅ '+t('yes'):'❌ '+t('no'));setText('appNetflix',check(25,0));setText('appYoutube',check(20,0));setText('appZoom',check(3.8,3.8));setText('appTwitch',check(6,0));setText('appGeForce',check(45,0))}
+      function updateAppTable(dl,ul){const check=(rd,ru)=>((dl>=rd)&&(ru?ul>=ru:!0)?'✅ '+t('yes'):'❌ '+t('no'));setText('appNetflix',check(25,0));setText('appYoutube',check(20,0));setText('appTwitch',check(6,0));setText('appGeForce',check(45,0))}
 
       // Historial
       function saveResult(p,jit,dl,ul,loaded){history.unshift({date:new Date().toISOString(),ping:+p.toFixed(0),jitter:+jit.toFixed(1),download:+dl.toFixed(1),upload:+ul.toFixed(1),loadedPing:+loaded.toFixed(0)});if(history.length>10)history.pop();localStorage.setItem(HISTORY_KEY,JSON.stringify(history));renderHist();updateChart()}
@@ -338,7 +334,7 @@
       function setAutoTheme(){let saved=localStorage.getItem(DARK_KEY);if(saved){if(saved==='light')document.body.classList.add('light-mode');else document.body.classList.remove('light-mode')}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches){document.body.classList.add('light-mode')}}
 
       // Idioma
-      function toggleLang(){lang=lang==='es'?'en':'es';localStorage.setItem(LANG_KEY,lang);$('langToggle').textContent=lang==='es'?'🌐 ES':'🌐 EN';$('startBtn').textContent=t('start');$('fastModeLabel').innerHTML=t('fast_mode')+' <span class="help-icon" data-bs-toggle="tooltip" title="Prueba ligera">?</span>';renderHist();if(lastResult)genAnalysis(lastResult.ping,lastResult.jitter,lastResult.download,lastResult.upload,lastResult.loadedPing);if(lastResult)genCompare(lastResult.download,lastResult.upload);if(lastResult)updateAppTable(lastResult.download,lastResult.upload)}
+      function toggleLang(){lang=lang==='es'?'en':'es';localStorage.setItem(LANG_KEY,lang);$('langToggle').textContent=lang==='es'?'🌐 ES':'🌐 EN';$('startBtn').textContent=t('start');$('fastModeLabel').innerHTML=t('fast_mode')+' <span class="help-icon" data-bs-toggle="tooltip" title="Prueba ligera">?</span>';renderHist();if(lastResult)genAnalysis(lastResult.ping,lastResult.jitter,lastResult.download,lastResult.upload,lastResult.loadedPing);if(lastResult)updateAppTable(lastResult.download,lastResult.upload)}
 
       // Inicialización
       document.addEventListener('DOMContentLoaded',()=>{
@@ -350,7 +346,7 @@
         setTimeout(detectISP,2000);
         renderHist();initChart();
         $('startBtn').addEventListener('click',runTest);
-        $('resetBtn').addEventListener('click',()=>{['pingVal','jitterVal','dlVal','ulVal','mainSpeed','testStatus'].forEach(id=>setText(id,'--'));$('gauge').classList.remove('active');$('startBtn').disabled=!1;$('progressWrapper').hidden=!0;show('liveSpeedChart',!1);$('analysisCard').style.display='none';$('comparisonCard').style.display='none';$('shareBtn').disabled=!0;['pingLol','pingCod','pingGta'].forEach(id=>setText(id,'-- ms'));['appNetflix','appYoutube','appZoom','appTwitch','appGeForce'].forEach(id=>setText(id,'-'))});
+        $('resetBtn').addEventListener('click',()=>{['pingVal','jitterVal','dlVal','ulVal','mainSpeed','testStatus'].forEach(id=>setText(id,'--'));$('gauge').classList.remove('active');$('startBtn').disabled=!1;$('progressWrapper').hidden=!0;show('liveSpeedChart',!1);$('analysisCard').style.display='none';$('shareBtn').disabled=!0;['pingLol','pingCod','pingGta'].forEach(id=>setText(id,'-- ms'));['appNetflix','appYoutube','appTwitch','appGeForce'].forEach(id=>setText(id,'-'))});
         $('fastModeSwitch').addEventListener('change',e=>{isFast=e.target.checked});
         $('themeToggle').addEventListener('click',toggleTheme);
         $('langToggle').addEventListener('click',toggleLang);
