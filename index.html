@@ -1,717 +1,519 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetPulse Pro | Test de Velocidad</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <style>
-        :root {
-            --bg-dark: #020617;
-            --bg-light: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.03);
-            --accent: #3b82f6;
-            --text-main: #f8fafc;
-            --text-label: #94a3b8;
-        }
-
-        body {
-            background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-dark) 70%) no-repeat;
-            background-attachment: fixed;
-            color: var(--text-main);
-            font-family: 'Inter', system-ui, sans-serif;
-            min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        body.dark-mode {
-            background: radial-gradient(circle at 50% 0%, #0f172a 0%, #000000 70%) no-repeat;
-            background-attachment: fixed;
-        }
-
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .display-speed { 
-            font-size: 5rem; 
-            font-weight: 800; 
-            letter-spacing: -2px; 
-            transition: color 0.3s;
-        }
-
-        .reference-table { 
-            background: rgba(0, 0, 0, 0.3) !important; 
-            border-radius: 15px; 
-            overflow: hidden;
-            border: none !important;
-        }
-        .reference-table th { 
-            background: rgba(255, 255, 255, 0.05) !important; 
-            color: var(--accent) !important; 
-            border: none !important; 
-            font-size: 0.7rem; 
-        }
-        .reference-table td { 
-            background: transparent !important; 
-            color: #cbd5e1 !important; 
-            border-bottom: 1px solid rgba(255,255,255,0.05) !important; 
-            padding: 10px !important; 
-            font-size: 0.8rem; 
-            transition: background 0.3s;
-        }
-
-        /* Fila resaltada en la guía */
-        .reference-table tr.table-active td {
-            background: rgba(59, 130, 246, 0.15) !important;
-            font-weight: bold;
-            color: white !important;
-        }
-
-        .progress { 
-            height: 8px; 
-            background: rgba(255,255,255,0.1); 
-            border-radius: 10px; 
-            margin-top: 10px; 
-        }
-        .progress-bar-custom { 
-            background: linear-gradient(90deg, #0ea5e9, #22c55e); 
-            border-radius: 10px; 
-            transition: width 0.5s ease, background 0.5s;
-        }
-
-        .label-text { 
-            color: var(--text-label); 
-            font-size: 0.65rem; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-        }
-        
-        .badge-isp {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 100px;
-            padding: 6px 15px;
-            display: inline-flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            font-size: 0.75rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .diag-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 15px;
-            height: 100%;
-        }
-
-        .modal-content { 
-            background: #0f172a !important; 
-            border: 1px solid var(--accent) !important; 
-            border-radius: 20px !important; 
-        }
-
-        .btn-toolbar {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        #results-history {
-            max-height: 200px;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 10px;
-        }
-
-        #results-history div {
-            padding: 5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.8rem;
-        }
-
-        #privacy-message {
-            font-size: 0.7rem;
-            color: var(--text-label);
-            margin-top: 10px;
-        }
-
-        .language-selector {
-            display: flex;
-            gap: 5px;
-        }
-
-        .language-selector button {
-            padding: 2px 8px;
-            font-size: 0.7rem;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-            margin: 20px 0;
-        }
-    </style>
-</head>
-<body class="py-4">
-
-<div class="container text-center">
-    <header>
-        <h1 class="fw-black mb-1">Net<span class="text-primary">Pulse</span> Pro</h1>
-        <div class="badge-isp">
-            <small id="userIsp"><i class="bi bi-broadcast me-1 text-primary"></i>Obteniendo ISP...</small>
-            <small class="text-secondary">|</small>
-            <small class="text-danger fw-bold">Barinas, VE</small>
-        </div>
-    </header>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            
-            <div class="glass-card">
-                <!-- Barra de herramientas -->
-                <div class="btn-toolbar">
-                    <div class="language-selector">
-                        <button class="btn btn-sm btn-outline-light" onclick="changeLanguage('es')">ES</button>
-                        <button class="btn btn-sm btn-outline-light" onclick="changeLanguage('en')">EN</button>
-                    </div>
-                    <button class="btn btn-sm btn-outline-light" onclick="toggleDarkMode()" id="darkModeBtn">
-                        <i class="bi bi-moon-stars"></i>
-                    </button>
-                    <button class="btn btn-sm btn-dark border-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#gameModal">
-                        <i class="bi bi-controller"></i> GAMING HUB
-                    </button>
-                </div>
-
-                <div class="display-speed" id="speedValue">0.0</div>
-                <p class="text-primary fw-bold small mb-4">MBPS DOWNLOAD</p>
-
-                <div class="row g-0 py-3 border-top border-bottom mb-4">
-                    <div class="col-3 border-end">
-                        <span class="label-text">Ping</span>
-                        <div class="fw-bold text-warning" id="pPing">--</div>
-                    </div>
-                    <div class="col-3 border-end">
-                        <span class="label-text">Subida</span>
-                        <div class="fw-bold text-info" id="pUp">--</div>
-                    </div>
-                    <div class="col-3 border-end">
-                        <span class="label-text">Jitter</span>
-                        <div class="fw-bold text-success" id="pJitter">--</div>
-                    </div>
-                    <div class="col-3">
-                        <span class="label-text">Pérdida</span>
-                        <div class="fw-bold text-danger" id="pLoss">0%</div>
-                    </div>
-                </div>
-
-                <div class="d-flex gap-2 mb-3">
-                    <button class="btn btn-primary flex-grow-1 rounded-pill py-3 fw-bold shadow-lg" onclick="runTest()" id="runBtn">
-                        INICIAR ANÁLISIS
-                    </button>
-                    <button class="btn btn-outline-light rounded-pill px-3" onclick="copyResult()" id="copyBtn" disabled>
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                </div>
-
-                <!-- Historial de resultados -->
-                <div id="results-history" style="display: none;">
-                    <h6 class="label-text text-primary mb-2">Historial</h6>
-                </div>
-            </div>
-
-            <!-- Gráfico de resultados -->
-            <div class="glass-card">
-                <h6 class="label-text text-primary mb-3">Evolución de Velocidad</h6>
-                <div class="chart-container">
-                    <canvas id="results-chart"></canvas>
-                </div>
-            </div>
-
-            <!-- CAPACIDAD DEL ENLACE (Ahora dinámico) -->
-            <div class="glass-card text-start" id="capacidadEnlace">
-                <h6 class="label-text text-primary mb-3">Capacidad del Enlace</h6>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-white">Streaming 4K / 8K</span>
-                        <span id="streamingLabel" class="fw-bold">--</span>
-                    </div>
-                    <div class="progress">
-                        <div id="streamingBar" class="progress-bar progress-bar-custom" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-white">Gaming Competitivo</span>
-                        <span id="gamingLabel" class="fw-bold">--</span>
-                    </div>
-                    <div class="progress">
-                        <div id="gamingBar" class="progress-bar progress-bar-custom" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjetas de diagnóstico -->
-            <div class="row g-2 mb-3 text-start">
-                <div class="col-4">
-                    <div class="diag-card">
-                        <i class="bi bi-clock text-primary"></i>
-                        <div class="fw-bold small mt-1">Latencia</div>
-                        <div style="font-size: 0.6rem; color: #94a3b8;">Tiempo de respuesta de red.</div>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="diag-card">
-                        <i class="bi bi-cloud-arrow-up text-info"></i>
-                        <div class="fw-bold small mt-1">Subida</div>
-                        <div style="font-size: 0.6rem; color: #94a3b8;">Velocidad de carga de datos.</div>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="diag-card">
-                        <i class="bi bi-activity text-warning"></i>
-                        <div class="fw-bold small mt-1">Estabilidad</div>
-                        <div style="font-size: 0.6rem; color: #94a3b8;">Consistencia sin cortes.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GUÍA DE CALIDAD (Ahora con resaltado dinámico) -->
-            <div class="glass-card p-3">
-                <h6 class="label-text text-primary mb-3 text-start">Guía de Calidad</h6>
-                <table class="table reference-table mb-0" id="tablaGuia">
-                    <thead>
-                        <tr>
-                            <th>Estado</th>
-                            <th>Descarga</th>
-                            <th>Uso Ideal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="filaOptima">
-                            <td><span class="badge bg-success">ÓPTIMO</span></td>
-                            <td>+50 Mbps</td>
-                            <td>4K & Gaming Pro</td>
-                        </tr>
-                        <tr id="filaRegular">
-                            <td><span class="badge bg-warning text-dark">REGULAR</span></td>
-                            <td>20-50 Mbps</td>
-                            <td>HD / Oficina</td>
-                        </tr>
-                        <tr id="filaMala">
-                            <td><span class="badge bg-danger">MALA</span></td>
-                            <td>&lt; 20 Mbps</td>
-                            <td>Básico / Chat</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mensaje de privacidad -->
-            <div id="privacy-message" class="text-center"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Gaming (Pings dinámicos) -->
-<div class="modal fade" id="gameModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered px-4">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header border-0 pb-0 text-white">
-                <h6 class="modal-title fw-bold">Servidores de Juego</h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-white">
-                <div class="d-flex justify-content-between mb-2">
-                    <span>League of Legends</span>
-                    <span id="pingLoL" class="badge bg-secondary">--</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Call of Duty</span>
-                    <span id="pingCoD" class="badge bg-secondary">--</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span>GTA V RP</span>
-                    <span id="pingGTA" class="badge bg-secondary">--</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-// Configuración
-const RESULTS_HISTORY_KEY = 'velocidadInternetHistory';
-const DARK_MODE_KEY = 'velocidadInternetDarkMode';
-const LANG_KEY = 'velocidadInternetLang';
-const MAX_HISTORY = 10;
-
-// Endpoints de Cloudflare (con CORS habilitado)
-const CF_DOWNLOAD_URL = 'https://speed.cloudflare.com/__down?bytes=';
-const CF_UPLOAD_URL = 'https://speed.cloudflare.com/__up';
-
-// Tamaños para las pruebas
-const DOWNLOAD_SIZE = 10_000_000;  // 10 MB
-const UPLOAD_SIZE = 1_000_000;    // 1 MB
-
-// Variables globales
-let resultsHistory = [];
-let currentLang = 'es';
-let chart;
-
-// Traducciones
-const translations = {
-  es: {
-    speedTest: 'Test de Velocidad',
-    ping: 'Ping',
-    download: 'Descarga',
-    upload: 'Subida',
-    ms: 'ms',
-    mbps: 'Mbps',
-    start: 'INICIAR ANÁLISIS',
-    starting: 'Iniciando...',
-    pingPhase: 'Midiendo latencia...',
-    downloadPhase: 'Midiendo descarga...',
-    uploadPhase: 'Midiendo subida...',
-    complete: 'Completado',
-    error: 'Error en la prueba',
-    copy: 'Copiar',
-    copied: '¡Copiado!',
-    history: 'Historial',
-    noHistory: 'Sin resultados aún',
-    clearHistory: 'Borrar historial',
-    themeDark: 'Modo Oscuro',
-    themeLight: 'Modo Claro',
-    lang: 'Idioma',
-    isp: 'Proveedor',
-    streaming: 'Streaming',
-    gaming: 'Gaming',
-    capacity: 'Capacidad del enlace',
-    guide: 'Guía de calidad'
-  },
-  en: {
-    speedTest: 'Speed Test',
-    ping: 'Ping',
-    download: 'Download',
-    upload: 'Upload',
-    ms: 'ms',
-    mbps: 'Mbps',
-    start: 'START TEST',
-    starting: 'Starting...',
-    pingPhase: 'Measuring latency...',
-    downloadPhase: 'Measuring download...',
-    uploadPhase: 'Measuring upload...',
-    complete: 'Complete',
-    error: 'Test error',
-    copy: 'Copy',
-    copied: 'Copied!',
-    history: 'History',
-    noHistory: 'No results yet',
-    clearHistory: 'Clear history',
-    themeDark: 'Dark Mode',
-    themeLight: 'Light Mode',
-    lang: 'Language',
-    isp: 'ISP',
-    streaming: 'Streaming',
-    gaming: 'Gaming',
-    capacity: 'Link Capacity',
-    guide: 'Quality Guide'
-  }
-};
-
-// Inicialización
-document.addEventListener('DOMContentLoaded', () => {
-  loadHistory();
-  loadTheme();
-  loadLanguage();
-  detectISP();
-  renderChart();
-  updateCapacidadEnlace(0);
-  updateGuiaCalidad(0);
-  document.getElementById('startBtn').addEventListener('click', runTest);
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-  document.getElementById('langToggle').addEventListener('click', toggleLanguage);
-});
-
-// ========== FUNCIONES DE TEST REAL ==========
-async function runTest() {
-  const startBtn = document.getElementById('startBtn');
-  const statusEl = document.getElementById('testStatus');
-  const pingEl = document.getElementById('pingValue');
-  const downloadEl = document.getElementById('downloadValue');
-  const uploadEl = document.getElementById('uploadValue');
-  const gaugeCircle = document.querySelector('.gauge-circle');
-
-  // Deshabilitar botón durante la prueba
-  startBtn.disabled = true;
-  startBtn.textContent = t('starting');
-  gaugeCircle.classList.add('active');
-
-  // Resetear valores
-  pingEl.textContent = '--';
-  downloadEl.textContent = '--';
-  uploadEl.textContent = '--';
-  statusEl.textContent = '';
-
-  let ping = 0, downloadSpeed = 0, uploadSpeed = 0;
-  let testError = false;
-
-  try {
-    // Fase 1: Ping (promedio de 5 intentos)
-    statusEl.textContent = t('pingPhase');
-    ping = await measurePing(5);
-    pingEl.textContent = ping.toFixed(1);
-
-    // Fase 2: Descarga
-    statusEl.textContent = t('downloadPhase');
-    downloadSpeed = await measureDownload();
-    downloadEl.textContent = downloadSpeed.toFixed(2);
-
-    // Fase 3: Subida
-    statusEl.textContent = t('uploadPhase');
-    uploadSpeed = await measureUpload();
-    uploadEl.textContent = uploadSpeed.toFixed(2);
-
-  } catch (error) {
-    console.error('Error en el test:', error);
-    statusEl.textContent = t('error');
-    testError = true;
-  }
-
-  gaugeCircle.classList.remove('active');
-  startBtn.disabled = false;
-  startBtn.textContent = t('start');
-
-  if (!testError) {
-    statusEl.textContent = t('complete');
-    saveResult(ping, downloadSpeed, uploadSpeed);
-    updateCapacidadEnlace(downloadSpeed);
-    updateGuiaCalidad(downloadSpeed);
-    updateGamingPings(ping);
-  }
-}
-
-// Medición de ping: solicitudes HEAD a un recurso pequeño
-async function measurePing(attempts = 5) {
-  const url = 'https://speed.cloudflare.com/__down?bytes=0'; // recurso mínimo
-  let total = 0;
-  for (let i = 0; i < attempts; i++) {
-    const start = performance.now();
-    await fetch(url, { method: 'HEAD', cache: 'no-store' });
-    const end = performance.now();
-    total += (end - start);
-  }
-  return total / attempts;  // ping en ms
-}
-
-// Medición de descarga real
-async function measureDownload() {
-  const startTime = performance.now();
-  const response = await fetch(`${CF_DOWNLOAD_URL}${DOWNLOAD_SIZE}`, { cache: 'no-store' });
-  const data = await response.arrayBuffer();
-  const endTime = performance.now();
-  const durationSeconds = (endTime - startTime) / 1000;
-  const bitsLoaded = DOWNLOAD_SIZE * 8;
-  const speedMbps = (bitsLoaded / durationSeconds) / 1_000_000;
-  return speedMbps;
-}
-
-// Medición de subida real
-async function measureUpload() {
-  // Generar datos aleatorios del tamaño exacto
-  const randomData = new Uint8Array(UPLOAD_SIZE);
-  for (let i = 0; i < UPLOAD_SIZE; i++) {
-    randomData[i] = Math.floor(Math.random() * 256);
-  }
-  const blob = new Blob([randomData], { type: 'application/octet-stream' });
-
-  const startTime = performance.now();
-  const response = await fetch(CF_UPLOAD_URL, {
-    method: 'POST',
-    body: blob,
-    cache: 'no-store',
-    headers: { 'Content-Type': 'application/octet-stream' }
-  });
-  const endTime = performance.now();
-  // Leer respuesta para asegurar que la subida terminó
-  await response.text();
-
-  const durationSeconds = (endTime - startTime) / 1000;
-  const bitsUploaded = UPLOAD_SIZE * 8;
-  const speedMbps = (bitsUploaded / durationSeconds) / 1_000_000;
-  return speedMbps;
-}
-
-// ========== FUNCIONES AUXILIARES (sin cambios mayores) ==========
-function t(key) {
-  return translations[currentLang][key] || key;
-}
-
-async function detectISP() {
-  try {
-    const response = await fetch('https://ipapi.co/json/');
-    const data = await response.json();
-    document.getElementById('ispName').textContent = data.org || data.isp || 'Desconocido';
-  } catch {
-    document.getElementById('ispName').textContent = 'No detectado';
-  }
-}
-
-function updateCapacidadEnlace(speed) {
-  const streamingBar = document.getElementById('streamingCap');
-  const gamingBar = document.getElementById('gamingCap');
-  let streamingLevel = 0, gamingLevel = 0;
-
-  if (speed >= 25) streamingLevel = 4; // 4K
-  else if (speed >= 15) streamingLevel = 3; // 4K comprimido
-  else if (speed >= 5) streamingLevel = 2; // HD
-  else if (speed > 0) streamingLevel = 1; // SD
-
-  if (speed >= 15) gamingLevel = 3; // Óptimo
-  else if (speed >= 5) gamingLevel = 2; // Regular
-  else if (speed > 0) gamingLevel = 1; // Malo
-
-  streamingBar.style.width = (streamingLevel * 25) + '%';
-  gamingBar.style.width = (gamingLevel * 33.3) + '%';
-  streamingBar.textContent = speed > 0 ? (streamingLevel >= 4 ? '4K/8K' : ['SD','HD','4K'][streamingLevel]) : '';
-  gamingBar.textContent = speed > 0 ? (['','MALO','REGULAR','ÓPTIMO'][gamingLevel]) : '';
-}
-
-function updateGuiaCalidad(speed) {
-  const rows = document.querySelectorAll('#qualityTable tbody tr');
-  rows.forEach(row => row.classList.remove('table-active'));
-  if (speed >= 25) rows[3].classList.add('table-active');      // 4K
-  else if (speed >= 15) rows[2].classList.add('table-active'); // 4K comprimido
-  else if (speed >= 5) rows[1].classList.add('table-active');  // HD
-  else if (speed > 0) rows[0].classList.add('table-active');   // SD
-}
-
-function updateGamingPings(ping) {
-  document.getElementById('pingLol').textContent = (ping + Math.random()*10 + 10).toFixed(0) + ' ms';
-  document.getElementById('pingCod').textContent = (ping + Math.random()*20 + 15).toFixed(0) + ' ms';
-  document.getElementById('pingGta').textContent = (ping + Math.random()*20 + 30).toFixed(0) + ' ms';
-}
-
-// Historial (sin cambios)
-function saveResult(ping, download, upload) {
-  const result = {
-    date: new Date().toISOString(),
-    ping: parseFloat(ping.toFixed(1)),
-    download: parseFloat(download.toFixed(2)),
-    upload: parseFloat(upload.toFixed(2))
-  };
-  resultsHistory.unshift(result);
-  if (resultsHistory.length > MAX_HISTORY) resultsHistory.pop();
-  localStorage.setItem(RESULTS_HISTORY_KEY, JSON.stringify(resultsHistory));
-  displayResultsHistory();
-  updateChart();
-}
-
-function loadHistory() {
-  const stored = localStorage.getItem(RESULTS_HISTORY_KEY);
-  resultsHistory = stored ? JSON.parse(stored) : [];
-  displayResultsHistory();
-}
-
-function displayResultsHistory() {
-  const container = document.getElementById('historyList');
-  if (!container) return;
-  if (resultsHistory.length === 0) {
-    container.innerHTML = `<li class="list-group-item">${t('noHistory')}</li>`;
-    return;
-  }
-  container.innerHTML = resultsHistory.map((r, i) => `
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <span>${new Date(r.date).toLocaleString()}</span>
-      <span>⬇ ${r.download} Mbps / ⬆ ${r.upload} Mbps / 🕒 ${r.ping} ms</span>
-      <button class="btn btn-sm btn-outline-light" onclick="copyHistory(${i})" title="${t('copy')}"><i class="bi bi-clipboard"></i></button>
-    </li>
-  `).join('');
-}
-
-function copyHistory(index) {
-  const r = resultsHistory[index];
-  navigator.clipboard.writeText(`⬇ ${r.download} Mbps / ⬆ ${r.upload} Mbps / Ping ${r.ping} ms`);
-}
-
-// Gráfico (sin cambios relevantes)
-function renderChart() {
-  const ctx = document.getElementById('speedChart').getContext('2d');
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Descarga (Mbps)',
-        data: [],
-        borderColor: '#0d6efd',
-        tension: 0.1
-      }, {
-        label: 'Subida (Mbps)',
-        data: [],
-        borderColor: '#198754',
-        tension: 0.1
-      }]
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>NetPulse Pro - Test de Velocidad Real</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --text-color: #fff;
+      --bg-primary: #0b0f19;
+      --accent: #6c63ff;
     }
-  });
-  updateChart();
-}
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.light-mode {
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      color: #1e293b;
+      --glass-bg: rgba(255, 255, 255, 0.4);
+      --glass-border: rgba(0, 0, 0, 0.1);
+    }
+    .navbar {
+      backdrop-filter: blur(10px);
+      background: var(--glass-bg);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+    .gauge-circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 12px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      position: relative;
+      margin: 0 auto 1.5rem;
+      transition: border-color 0.3s;
+    }
+    .gauge-circle.active {
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .metric-box {
+      background: rgba(0,0,0,0.2);
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    .metric-box .value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    .btn-primary {
+      background: var(--accent);
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    .btn-primary:hover {
+      transform: scale(1.05);
+      background: #5a52d5;
+    }
+    .progress {
+      background: rgba(255,255,255,0.2);
+      border-radius: 1rem;
+    }
+    .progress-bar {
+      background: var(--accent);
+      border-radius: 1rem;
+    }
+    #qualityTable th, #qualityTable td {
+      background: transparent;
+      color: inherit;
+    }
+    .table-active {
+      background: var(--accent) !important;
+      color: white !important;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#"><i class="bi bi-speedometer2 me-2"></i>NetPulse Pro</a>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-light btn-sm" id="langToggle" title="Cambiar idioma">🌐 ES</button>
+        <button class="btn btn-outline-light btn-sm" id="themeToggle" title="Modo claro/oscuro"><i class="bi bi-moon-stars-fill"></i></button>
+      </div>
+    </div>
+  </nav>
 
-function updateChart() {
-  if (!chart) return;
-  chart.data.labels = resultsHistory.map(r => new Date(r.date).toLocaleTimeString());
-  chart.data.datasets[0].data = resultsHistory.map(r => r.download);
-  chart.data.datasets[1].data = resultsHistory.map(r => r.upload);
-  chart.update();
-}
+  <main class="container py-5">
+    <div class="text-center mb-4">
+      <p class="lead">Proveedor detectado: <span id="ispName" class="fw-bold">Detectando...</span></p>
+    </div>
 
-// Tema e idioma (sin cambios)
-function toggleTheme() {
-  document.body.classList.toggle('dark-mode');
-  localStorage.setItem(DARK_MODE_KEY, document.body.classList.contains('dark-mode'));
-}
+    <!-- Medidor principal -->
+    <div class="glass-card text-center mb-5">
+      <div class="gauge-circle" id="gaugeCircle">
+        <span id="mainSpeed">--</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-4">
+          <div class="metric-box">
+            <div class="text-uppercase small">Ping</div>
+            <div class="value" id="pingValue">--</div>
+            <small>ms</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="metric-box">
+            <div class="text-uppercase small">Descarga</div>
+            <div class="value" id="downloadValue">--</div>
+            <small>Mbps</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="metric-box">
+            <div class="text-uppercase small">Subida</div>
+            <div class="value" id="uploadValue">--</div>
+            <small>Mbps</small>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-lg px-5" id="startBtn">INICIAR TEST</button>
+      <div id="testStatus" class="mt-3 fw-bold"></div>
+    </div>
 
-function loadTheme() {
-  if (localStorage.getItem(DARK_MODE_KEY) === 'true') {
-    document.body.classList.add('dark-mode');
-  }
-}
+    <!-- Capacidad del enlace -->
+    <div class="glass-card mb-5">
+      <h5 class="mb-3">Capacidad del enlace</h5>
+      <div class="mb-3">
+        <label class="form-label">Streaming</label>
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar" id="streamingCap" role="progressbar" style="width: 0%;">--</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Gaming competitivo</label>
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar" id="gamingCap" role="progressbar" style="width: 0%;">--</div>
+        </div>
+      </div>
+    </div>
 
-function toggleLanguage() {
-  currentLang = currentLang === 'es' ? 'en' : 'es';
-  localStorage.setItem(LANG_KEY, currentLang);
-  updateUILanguage();
-}
+    <!-- Guía de calidad y Gaming Hub -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-6">
+        <div class="glass-card h-100">
+          <h5>Guía de Calidad</h5>
+          <table class="table table-borderless" id="qualityTable">
+            <thead><tr><th>Calidad</th><th>Requerimiento</th></tr></thead>
+            <tbody>
+              <tr><td>SD</td><td>3 Mbps</td></tr>
+              <tr><td>HD</td><td>5 Mbps</td></tr>
+              <tr><td>4K comprimido</td><td>15 Mbps</td></tr>
+              <tr><td>4K/8K</td><td>25 Mbps</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="glass-card h-100">
+          <h5>Gaming Hub (pings estimados)</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-transparent text-light">League of Legends: <span id="pingLol" class="fw-bold">-- ms</span></li>
+            <li class="list-group-item bg-transparent text-light">Call of Duty: <span id="pingCod" class="fw-bold">-- ms</span></li>
+            <li class="list-group-item bg-transparent text-light">GTA V Online: <span id="pingGta" class="fw-bold">-- ms</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-function loadLanguage() {
-  currentLang = localStorage.getItem(LANG_KEY) || 'es';
-  updateUILanguage();
-}
+    <!-- Historial y gráfico -->
+    <div class="glass-card mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>Historial de resultados</h5>
+        <button class="btn btn-sm btn-outline-light" onclick="clearHistory()">Borrar historial</button>
+      </div>
+      <ul class="list-group mb-4" id="historyList"></ul>
+      <canvas id="speedChart" height="100"></canvas>
+    </div>
+  </main>
 
-function updateUILanguage() {
-  document.querySelectorAll('[data-translate]').forEach(el => {
-    const key = el.getAttribute('data-translate');
-    if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
-  });
-  displayResultsHistory(); // actualizar texto "sin resultados"
-}
+  <footer>&copy; 2024 NetPulse Pro · Test de velocidad real</footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // ============ CONFIGURACIÓN ============
+    const RESULTS_HISTORY_KEY = 'speedHistoryReal';
+    const DARK_MODE_KEY = 'darkModeReal';
+    const LANG_KEY = 'langReal';
+    const MAX_HISTORY = 10;
+
+    // Endpoints de Cloudflare (CORS habilitados)
+    const CF_DOWNLOAD_URL = 'https://speed.cloudflare.com/__down?bytes=';
+    const CF_UPLOAD_URL   = 'https://speed.cloudflare.com/__up';
+
+    const DOWNLOAD_SIZE = 10_000_000; // 10 MB
+    const UPLOAD_SIZE   = 1_000_000;  // 1 MB
+
+    // Variables globales
+    let resultsHistory = [];
+    let currentLang = 'es';
+    let chart;
+
+    // Traducciones mínimas
+    const translations = {
+      es: { start: 'INICIAR TEST', starting: 'Iniciando...', pingPhase: 'Midiendo latencia...',
+            downloadPhase: 'Midiendo descarga...', uploadPhase: 'Midiendo subida...',
+            complete: 'Completado', error: 'Error en el test', noHistory: 'Sin resultados aún' },
+      en: { start: 'START TEST', starting: 'Starting...', pingPhase: 'Measuring latency...',
+            downloadPhase: 'Measuring download...', uploadPhase: 'Measuring upload...',
+            complete: 'Complete', error: 'Test failed', noHistory: 'No results yet' }
+    };
+
+    // ============ INICIALIZACIÓN ============
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHistory();
+      loadTheme();
+      loadLanguage();
+      detectISP();
+      renderChart();
+      updateCapacidadEnlace(0);
+      updateGuiaCalidad(0);
+      document.getElementById('startBtn').addEventListener('click', runTest);
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+      document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+    });
+
+    // ============ TEST REAL ============
+    async function runTest() {
+      const startBtn = document.getElementById('startBtn');
+      const statusEl = document.getElementById('testStatus');
+      const pingEl = document.getElementById('pingValue');
+      const downloadEl = document.getElementById('downloadValue');
+      const uploadEl = document.getElementById('uploadValue');
+      const gaugeCircle = document.getElementById('gaugeCircle');
+      const mainSpeed = document.getElementById('mainSpeed');
+
+      startBtn.disabled = true;
+      startBtn.textContent = translations[currentLang].starting;
+      gaugeCircle.classList.add('active');
+
+      pingEl.textContent = '--';
+      downloadEl.textContent = '--';
+      uploadEl.textContent = '--';
+      mainSpeed.textContent = '--';
+      statusEl.textContent = '';
+
+      let ping = 0, downloadSpeed = 0, uploadSpeed = 0;
+      let testError = false;
+
+      try {
+        // Fase 1: Ping (promedio 5 intentos)
+        statusEl.textContent = translations[currentLang].pingPhase;
+        ping = await measurePing(5);
+        pingEl.textContent = ping.toFixed(1);
+
+        // Fase 2: Descarga
+        statusEl.textContent = translations[currentLang].downloadPhase;
+        downloadSpeed = await measureDownload();
+        downloadEl.textContent = downloadSpeed.toFixed(1);
+        mainSpeed.textContent = downloadSpeed.toFixed(0);
+
+        // Fase 3: Subida
+        statusEl.textContent = translations[currentLang].uploadPhase;
+        uploadSpeed = await measureUpload();
+        uploadEl.textContent = uploadSpeed.toFixed(1);
+      } catch (err) {
+        console.error('Error en el test:', err);
+        statusEl.textContent = translations[currentLang].error;
+        testError = true;
+      }
+
+      gaugeCircle.classList.remove('active');
+      startBtn.disabled = false;
+      startBtn.textContent = translations[currentLang].start;
+
+      if (!testError) {
+        statusEl.textContent = translations[currentLang].complete;
+        saveResult(ping, downloadSpeed, uploadSpeed);
+        updateCapacidadEnlace(downloadSpeed);
+        updateGuiaCalidad(downloadSpeed);
+        updateGamingPings(ping);
+      }
+    }
+
+    // Ping: varias solicitudes HEAD a recurso mínimo
+    async function measurePing(attempts = 5) {
+      const url = 'https://speed.cloudflare.com/__down?bytes=0';
+      let total = 0;
+      for (let i = 0; i < attempts; i++) {
+        const start = performance.now();
+        await fetch(url, { method: 'HEAD', cache: 'no-store' });
+        const end = performance.now();
+        total += (end - start);
+      }
+      return total / attempts;
+    }
+
+    // Descarga real
+    async function measureDownload() {
+      const start = performance.now();
+      const response = await fetch(CF_DOWNLOAD_URL + DOWNLOAD_SIZE, { cache: 'no-store' });
+      await response.arrayBuffer(); // esperar a que se descargue completamente
+      const end = performance.now();
+      const durationSec = (end - start) / 1000;
+      const bitsLoaded = DOWNLOAD_SIZE * 8;
+      return (bitsLoaded / durationSec) / 1_000_000; // Mbps
+    }
+
+    // Subida real
+    async function measureUpload() {
+      const data = new Uint8Array(UPLOAD_SIZE);
+      for (let i = 0; i < UPLOAD_SIZE; i++) data[i] = Math.floor(Math.random() * 256);
+      const blob = new Blob([data], { type: 'application/octet-stream' });
+
+      const start = performance.now();
+      const response = await fetch(CF_UPLOAD_URL, {
+        method: 'POST',
+        body: blob,
+        cache: 'no-store'
+      });
+      await response.text(); // asegurar que la subida terminó
+      const end = performance.now();
+      const durationSec = (end - start) / 1000;
+      const bitsUploaded = UPLOAD_SIZE * 8;
+      return (bitsUploaded / durationSec) / 1_000_000;
+    }
+
+    // ============ FUNCIONES AUXILIARES ============
+    function detectISP() {
+      fetch('https://ipapi.co/json/')
+        .then(r => r.json())
+        .then(d => document.getElementById('ispName').textContent = d.org || d.isp || 'No detectado')
+        .catch(() => document.getElementById('ispName').textContent = 'No disponible');
+    }
+
+    function updateCapacidadEnlace(speed) {
+      const sBar = document.getElementById('streamingCap');
+      const gBar = document.getElementById('gamingCap');
+      let streamLvl = 0, gamingLvl = 0;
+
+      if (speed >= 25) streamLvl = 4;
+      else if (speed >= 15) streamLvl = 3;
+      else if (speed >= 5) streamLvl = 2;
+      else if (speed > 0) streamLvl = 1;
+
+      if (speed >= 15) gamingLvl = 3;
+      else if (speed >= 5) gamingLvl = 2;
+      else if (speed > 0) gamingLvl = 1;
+
+      sBar.style.width = (streamLvl * 25) + '%';
+      gBar.style.width = (gamingLvl * 33.33) + '%';
+      sBar.textContent = speed > 0 ? (streamLvl >= 4 ? '4K/8K' : ['','SD','HD','4K'][streamLvl]) : '';
+      gBar.textContent = speed > 0 ? ['','MALO','REGULAR','ÓPTIMO'][gamingLvl] : '';
+    }
+
+    function updateGuiaCalidad(speed) {
+      document.querySelectorAll('#qualityTable tbody tr').forEach(r => r.classList.remove('table-active'));
+      if (speed >= 25) document.querySelector('#qualityTable tbody tr:nth-child(4)').classList.add('table-active');
+      else if (speed >= 15) document.querySelector('#qualityTable tbody tr:nth-child(3)').classList.add('table-active');
+      else if (speed >= 5) document.querySelector('#qualityTable tbody tr:nth-child(2)').classList.add('table-active');
+      else if (speed > 0) document.querySelector('#qualityTable tbody tr:nth-child(1)').classList.add('table-active');
+    }
+
+    function updateGamingPings(basePing) {
+      document.getElementById('pingLol').textContent = (basePing + Math.random()*10 + 10).toFixed(0) + ' ms';
+      document.getElementById('pingCod').textContent = (basePing + Math.random()*20 + 15).toFixed(0) + ' ms';
+      document.getElementById('pingGta').textContent = (basePing + Math.random()*20 + 30).toFixed(0) + ' ms';
+    }
+
+    // Historial
+    function saveResult(ping, down, up) {
+      const result = {
+        date: new Date().toISOString(),
+        ping: +ping.toFixed(1),
+        download: +down.toFixed(1),
+        upload: +up.toFixed(1)
+      };
+      resultsHistory.unshift(result);
+      if (resultsHistory.length > MAX_HISTORY) resultsHistory.pop();
+      localStorage.setItem(RESULTS_HISTORY_KEY, JSON.stringify(resultsHistory));
+      displayHistory();
+      updateChart();
+    }
+
+    function loadHistory() {
+      const stored = localStorage.getItem(RESULTS_HISTORY_KEY);
+      resultsHistory = stored ? JSON.parse(stored) : [];
+      displayHistory();
+    }
+
+    function displayHistory() {
+      const list = document.getElementById('historyList');
+      if (resultsHistory.length === 0) {
+        list.innerHTML = `<li class="list-group-item">${translations[currentLang].noHistory}</li>`;
+        return;
+      }
+      list.innerHTML = resultsHistory.map((r, i) => `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>${new Date(r.date).toLocaleString()}</span>
+          <span>⬇ ${r.download} Mbps / ⬆ ${r.upload} Mbps / 🕒 ${r.ping} ms</span>
+          <button class="btn btn-sm btn-outline-light" onclick="copyHistory(${i})" title="Copiar"><i class="bi bi-clipboard"></i></button>
+        </li>
+      `).join('');
+    }
+
+    function copyHistory(index) {
+      const r = resultsHistory[index];
+      navigator.clipboard.writeText(`⬇ ${r.download} Mbps / ⬆ ${r.upload} Mbps / Ping ${r.ping} ms`);
+    }
+
+    function clearHistory() {
+      resultsHistory = [];
+      localStorage.removeItem(RESULTS_HISTORY_KEY);
+      displayHistory();
+      updateChart();
+    }
+
+    // Gráfico
+    function renderChart() {
+      const ctx = document.getElementById('speedChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Descarga (Mbps)', data: [], borderColor: '#6c63ff', tension: 0.2 },
+            { label: 'Subida (Mbps)', data: [], borderColor: '#f97316', tension: 0.2 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: 'inherit' } } }
+        }
+      });
+      updateChart();
+    }
+
+    function updateChart() {
+      if (!chart) return;
+      chart.data.labels = resultsHistory.map(r => new Date(r.date).toLocaleTimeString());
+      chart.data.datasets[0].data = resultsHistory.map(r => r.download);
+      chart.data.datasets[1].data = resultsHistory.map(r => r.upload);
+      chart.update();
+    }
+
+    // Tema e idioma
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      localStorage.setItem(DARK_MODE_KEY, document.body.classList.contains('light-mode'));
+    }
+
+    function loadTheme() {
+      if (localStorage.getItem(DARK_MODE_KEY) === 'true') {
+        document.body.classList.add('light-mode');
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'es' ? 'en' : 'es';
+      localStorage.setItem(LANG_KEY, currentLang);
+      document.getElementById('langToggle').textContent = currentLang === 'es' ? '🌐 ES' : '🌐 EN';
+      document.getElementById('startBtn').textContent = translations[currentLang].start;
+      displayHistory();
+    }
+
+    function loadLanguage() {
+      const saved = localStorage.getItem(LANG_KEY);
+      if (saved === 'en' || saved === 'es') currentLang = saved;
+      document.getElementById('langToggle').textContent = currentLang === 'es' ? '🌐 ES' : '🌐 EN';
+      document.getElementById('startBtn').textContent = translations[currentLang].start;
+    }
+  </script>
 </body>
 </html>
