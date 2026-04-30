@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -294,10 +294,15 @@
         if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);genAnalysis(idle,jitter,dl,ul,loaded);updateGamePingsReal(idle);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0}
       }
 
-      async function updateGamePingsReal(basePing){
-        const endpoints={pingLol:'https://www.leagueoflegends.com',pingCod:'https://www.callofduty.com',pingGta:'https://www.rockstargames.com'};
-        for (let [id,url] of Object.entries(endpoints)){try{let start=performance.now();await fetch(url,{method:'HEAD',mode:'no-cors',cache:'no-store'});setText(id,Math.round(performance.now()-start)+' ms')}catch{if(id==='pingLol')setText(id,Math.round(basePing+random(15,25))+' ms');else if(id==='pingCod')setText(id,Math.round(basePing+random(25,40))+' ms');else if(id==='pingGta')setText(id,Math.round(basePing+random(35,50))+' ms')}}
-      }
+      function updateGamePings(basePing) {
+  // Distancias típicas: LoL ~ 10-30ms, CoD ~ 20-50ms, GTA V ~ 30-60ms adicionales
+  const lol = Math.round(basePing + random(10, 30));
+  const cod = Math.round(basePing + random(20, 50));
+  const gta = Math.round(basePing + random(30, 60));
+  $('pingLol').textContent = lol + ' ms';
+  $('pingCod').textContent = cod + ' ms';
+  $('pingGta').textContent = gta + ' ms';
+}
 
       function genAnalysis(ping,jit,dl,ul,loaded){
         let cls='',str='',gam='',rec=[];
