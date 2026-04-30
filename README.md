@@ -34,13 +34,6 @@ Ping, Jitter, Descarga, Subida y Latencia bajo carga (bufferbloat), con análisi
 
 ---
 
-## 📸 Captura de pantalla
-
-Reemplaza el archivo `screenshot.png` por una imagen de tu herramienta en acción.  
-Recomiendo tomar una captura con el resultado de un test y la tarjeta de análisis visible.
-
----
-
 ## ⚙️ Tecnologías utilizadas
 
 - **Frontend:** HTML5, CSS3 (custom properties, glassmorphism), Bootstrap 5 (carga asíncrona).
