@@ -1,187 +1,74 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetPulse Pro | Restaurado</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <style>
-        :root {
-            --bg-dark: #020617;
-            --glass: rgba(255, 255, 255, 0.03);
-            --accent: #3b82f6;
-            --text-main: #f8fafc;
-            --text-label: #94a3b8;
-        }
-
-        body {
-            background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-dark) 70%) no-repeat;
-            background-attachment: fixed;
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-        }
-
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .display-speed { font-size: 5rem; font-weight: 800; letter-spacing: -2px; }
-
-        /* FIX: TABLA GUÍA DE CALIDAD OSCURA */
-        .reference-table { 
-            background: rgba(0, 0, 0, 0.3) !important; 
-            border-radius: 15px; 
-            overflow: hidden;
-            border: none !important;
-        }
-        .reference-table th { background: rgba(255, 255, 255, 0.05) !important; color: var(--accent) !important; border: none !important; font-size: 0.7rem; }
-        .reference-table td { background: transparent !important; color: #cbd5e1 !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; padding: 10px !important; font-size: 0.8rem; }
-
-        /* BARRAS DE CAPACIDAD */
-        .progress { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 10px; }
-        .progress-bar-custom { background: linear-gradient(90deg, #0ea5e9, #22c55e); border-radius: 10px; }
-
-        .label-text { color: var(--text-label); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
-        
-        .badge-isp {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 100px;
-            padding: 6px 15px;
-            display: inline-flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            font-size: 0.75rem;
-        }
-
-        .diag-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 15px;
-            height: 100%;
-        }
-
-        .modal-content { background: #0f172a !important; border: 1px solid var(--accent) !important; border-radius: 20px !important; }
-    </style>
-</head>
-<body class="py-4">
-
-<div class="container text-center">
-    <header>
-        <h1 class="fw-black mb-1">Net<span class="text-primary">Pulse</span> Pro</h1>
-        <div class="badge-isp">
-            <small id="userIsp"><i class="bi bi-broadcast me-1 text-primary"></i>Obteniendo ISP...</small>
-            <small class="text-secondary">|</small>
-            <small class="text-danger fw-bold">Barinas, VE</small>
-        </div>
-    </header>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            
-            <div class="glass-card">
-                <div class="text-end mb-2">
-                    <button class="btn btn-sm btn-dark border-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#gameModal">
-                        <i class="bi bi-controller"></i> GAMING HUB
-                    </button>
-                </div>
-                <div class="display-speed" id="speedValue">0.0</div>
-                <p class="text-primary fw-bold small mb-4">MBPS DOWNLOAD</p>
-
-                <div class="row g-0 py-3 border-top border-bottom mb-4">
-                    <div class="col-3 border-end"><span class="label-text">Ping</span><div class="fw-bold text-warning" id="pPing">--</div></div>
-                    <div class="col-3 border-end"><span class="label-text">Subida</span><div class="fw-bold text-info" id="pUp">--</div></div>
-                    <div class="col-3 border-end"><span class="label-text">Jitter</span><div class="fw-bold text-success" id="pJitter">--</div></div>
-                    <div class="col-3"><span class="label-text">Estado</span><div class="text-success"><i class="bi bi-shield-check"></i></div></div>
-                </div>
-
-                <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-lg" onclick="runTest()" id="runBtn">INICIAR ANÁLISIS</button>
-            </div>
-
-            <div class="glass-card text-start">
-                <h6 class="label-text text-primary mb-3">Capacidad del Enlace</h6>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between small"><span class="text-white">Streaming 4K / 8K</span><span class="text-success fw-bold">ÓPTIMO</span></div>
-                    <div class="progress"><div class="progress-bar progress-bar-custom" style="width: 100%"></div></div>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between small"><span class="text-white">Gaming Competitivo</span><span class="text-warning fw-bold">EXCELENTE</span></div>
-                    <div class="progress"><div class="progress-bar progress-bar-custom" style="width: 90%; background: #eab308"></div></div>
-                </div>
-            </div>
-
-            <div class="row g-2 mb-3 text-start">
-                <div class="col-4">
-                    <div class="diag-card"><i class="bi bi-clock text-primary"></i><div class="fw-bold small mt-1">Latencia</div><div style="font-size: 0.6rem; color: #94a3b8;">Tiempo de respuesta de red.</div></div>
-                </div>
-                <div class="col-4">
-                    <div class="diag-card"><i class="bi bi-cloud-arrow-up text-info"></i><div class="fw-bold small mt-1">Subida</div><div style="font-size: 0.6rem; color: #94a3b8;">Velocidad de carga de datos.</div></div>
-                </div>
-                <div class="col-4">
-                    <div class="diag-card"><i class="bi bi-activity text-warning"></i><div class="fw-bold small mt-1">Estabilidad</div><div style="font-size: 0.6rem; color: #94a3b8;">Consistencia sin cortes.</div></div>
-                </div>
-            </div>
-
-            <div class="glass-card p-3">
-                <h6 class="label-text text-primary mb-3 text-start">Guía de Calidad</h6>
-                <table class="table reference-table mb-0">
-                    <thead><tr><th>Estado</th><th>Descarga</th><th>Uso Ideal</th></tr></thead>
-                    <tbody>
-                        <tr><td><span class="badge bg-success">ÓPTIMO</span></td><td>+50 Mbps</td><td>4K & Gaming Pro</td></tr>
-                        <tr><td><span class="badge bg-warning text-dark">REGULAR</span></td><td>20-50 Mbps</td><td>HD / Oficina</td></tr>
-                        <tr><td><span class="badge bg-danger">MALA</span></td><td>&lt; 20 Mbps</td><td>Básico / Chat</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="gameModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered px-4">
-        <div class="modal-content shadow-lg"><div class="modal-header border-0 pb-0 text-white"><h6 class="modal-title fw-bold">Servidores de Juego</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-white"><div class="d-flex justify-content-between mb-2"><span>League of Legends</span><span class="badge bg-success">25 ms</span></div><div class="d-flex justify-content-between mb-2"><span>Call of Duty</span><span class="badge bg-success">48 ms</span></div><div class="d-flex justify-content-between"><span>GTA V RP</span><span class="badge bg-info">32 ms</span></div></div></div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    async function getISP() {
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            document.getElementById('userIsp').innerHTML = `<i class="bi bi-broadcast me-1 text-primary"></i>${data.isp || 'Red Detectada'}`;
-        } catch(e) { document.getElementById('userIsp').innerText = "Error de detección"; }
-    }
-    getISP();
+// Código para gestión de historial de resultados en LocalStorage
+const resultsHistory = JSON.parse(localStorage.getItem('resultsHistory')) || [];
 
-    function runTest() {
-        let s = 0;
-        const btn = document.getElementById('runBtn');
-        const speedVal = document.getElementById('speedValue');
-        btn.disabled = true;
-        
-        const timer = setInterval(() => {
-            s += Math.random() * 8.5;
-            speedVal.innerText = s.toFixed(1);
-            if(s > 66) {
-                clearInterval(timer);
-                speedVal.innerText = "67.3";
-                document.getElementById('pPing').innerText = "25ms";
-                document.getElementById('pUp').innerText = "21.7";
-                document.getElementById('pJitter').innerText = "2ms";
-                btn.disabled = false;
-            }
-        }, 100);
+function saveResult(result) {
+    resultsHistory.push(result);
+    localStorage.setItem('resultsHistory', JSON.stringify(resultsHistory));
+}
+
+function displayResultsHistory() {
+    const historyContainer = document.getElementById('results-history');
+    historyContainer.innerHTML = '';
+    resultsHistory.forEach(result => {
+        const resultElement = document.createElement('div');
+        resultElement.innerText = result;
+        historyContainer.appendChild(resultElement);
+    });
+}
+
+// Integración con Chart.js para visualización
+let chart;
+function renderChart(data) {
+    const ctx = document.getElementById('results-chart').getContext('2d');
+    if (chart) {
+        chart.destroy();
     }
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Resultados',
+                data: data.values,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+// Interfaz adaptable y modo oscuro
+const toggleDarkMode = () => {
+    document.body.classList.toggle('dark-mode');
+};
+
+// Selector de idioma
+let currentLanguage = 'en';
+const changeLanguage = (language) => {
+    currentLanguage = language;
+    /* Lógica para traducir la interfaz */
+};
+
+// Botón para copiar resultado
+const copyResult = (result) => {
+    navigator.clipboard.writeText(result);
+    alert('Resultado copiado: ' + result);
+};
+
+// Mensaje de privacidad
+document.getElementById('privacy-message').innerText = 'Respetamos tu privacidad. Los resultados se almacenan localmente.';
+
+// Lógica de pérdida de paquetes
+function calculatePacketLoss(sent, received) {
+    return ((sent - received) / sent) * 100;
+}
+
 </script>
-</body>
-</html>
