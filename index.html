@@ -15,6 +15,9 @@
             --glass: rgba(255, 255, 255, 0.03);
             --accent: #3b82f6;
             --text-label: #94a3b8;
+            --status-green: #22c55e;
+            --status-yellow: #eab308;
+            --status-red: #ef4444;
         }
 
         body {
@@ -32,22 +35,23 @@
             border-radius: 32px;
             padding: 2rem;
             margin-bottom: 24px;
-            transition: all 0.3s ease;
         }
 
         .display-speed {
             font-size: clamp(4.5rem, 20vw, 7rem);
             font-weight: 800;
             letter-spacing: -3px;
-            background: linear-gradient(180deg, #fff 40%, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 10px 15px rgba(59, 130, 246, 0.2));
+            transition: all 0.5s ease;
         }
+
+        /* Clases de estado dinámicas */
+        .status-low { color: var(--status-red) !important; filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.4)); }
+        .status-mid { color: var(--status-yellow) !important; filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.4)); }
+        .status-high { color: #fff; filter: drop-shadow(0 10px 15px rgba(59, 130, 246, 0.2)); }
 
         .isp-badge {
             background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 100px;
             padding: 8px 20px;
             font-size: 0.75rem;
@@ -56,7 +60,6 @@
             margin-bottom: 30px;
         }
 
-        /* Medidores Principales con Etiquetas Corregidas */
         .label-text {
             color: var(--text-label);
             font-size: 0.65rem;
@@ -67,8 +70,6 @@
             margin-bottom: 4px;
         }
 
-        .value-text { font-size: 1rem; font-weight: 700; }
-
         .btn-pulse {
             background: linear-gradient(45deg, #2563eb, #3b82f6);
             border: none;
@@ -76,63 +77,31 @@
             padding: 18px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
         }
 
-        /* Diagnóstico con Contraste */
-        .diag-card {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 20px;
-            height: 100%;
+        /* Tabla de Referencia */
+        .reference-table {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
         }
-        .diag-title { color: #ffffff !important; font-weight: 700; margin-top: 10px; }
-        .diag-desc { color: #e2e8f0 !important; font-size: 0.75rem; line-height: 1.4; margin-top: 5px; }
+        .reference-table th { background: rgba(255, 255, 255, 0.05); color: var(--accent); }
+        .reference-table td { border-color: rgba(255, 255, 255, 0.05); color: #cbd5e1; }
 
-        /* Gaming Hub: Corrección de Pings Invisibles */
-        .modal-content {
-            background: #0f172a !important;
-            border: 1px solid rgba(59, 130, 246, 0.5) !important;
-            border-radius: 30px !important;
-        }
-
-        .game-row {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 12px 18px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .game-name { color: #fff; font-weight: 600; font-size: 0.9rem; }
-
-        /* Estilo forzado para que el número de Ping se vea */
-        .ping-badge {
-            min-width: 65px;
-            text-align: center;
-            font-weight: 800 !important;
-            font-size: 0.8rem !important;
-            padding: 6px 10px !important;
-            color: #ffffff !important;
-            border-radius: 8px;
-        }
-
-        .progress { height: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; }
-        .progress-bar { border-radius: 20px; box-shadow: 0 0 15px currentColor; }
+        .ping-badge { min-width: 65px; font-weight: 800; border-radius: 8px; }
+        .progress { height: 8px; background: rgba(255,255,255,0.05); border-radius: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container py-4 text-center animate__animated animate__fadeIn">
+<div class="container py-4 text-center">
     <header>
-        <h1 class="fw-black mb-3">Net<span class="text-primary">Pulse</span> Pro</h1>
-        <div class="isp-badge shadow-sm">
-            <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Buscando ISP...</span>
+        <h1 class="fw-black mb-1 animate__animated animate__fadeInDown">Net<span class="text-primary">Pulse</span> Pro</h1>
+        <div class="isp-badge shadow-sm mb-4">
+            <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Detectando ISP...</span>
             <span id="userLoc"><i class="bi bi-geo-alt-fill text-danger"></i> Ubicación...</span>
         </div>
     </header>
@@ -146,25 +115,25 @@
                     </button>
                 </div>
                 
-                <div class="display-speed" id="speedValue">0.0</div>
-                <p class="text-primary fw-bold small mb-4">MBPS DOWNLOAD</p>
+                <div class="display-speed status-high" id="speedValue">0.0</div>
+                <p id="speedUnit" class="text-primary fw-bold small mb-4">MBPS DOWNLOAD</p>
 
                 <div class="row g-0 py-3 border-top border-bottom border-white border-opacity-10 mb-4">
                     <div class="col-3 border-end border-white border-opacity-10">
                         <span class="label-text">Ping</span>
-                        <span id="pPing" class="value-text text-warning">--</span>
+                        <span id="pPing" class="fw-bold">--</span>
                     </div>
                     <div class="col-3 border-end border-white border-opacity-10">
                         <span class="label-text">Subida</span>
-                        <span id="pUp" class="value-text text-info">--</span>
+                        <span id="pUp" class="fw-bold">--</span>
                     </div>
                     <div class="col-3 border-end border-white border-opacity-10">
                         <span class="label-text">Jitter</span>
-                        <span id="pJitter" class="value-text text-success">--</span>
+                        <span id="pJitter" class="fw-bold">--</span>
                     </div>
                     <div class="col-3">
                         <span class="label-text">Estado</span>
-                        <span class="value-text text-success"><i class="bi bi-shield-check"></i></span>
+                        <span id="pStatus" class="fw-bold"><i class="bi bi-dash-circle"></i></span>
                     </div>
                 </div>
 
@@ -172,51 +141,40 @@
                     INICIAR ANÁLISIS
                 </button>
             </div>
-        </div>
 
-        <div class="col-lg-7 col-md-10">
-            <div class="glass-card text-start">
-                <h6 class="text-uppercase fw-bold mb-4" style="font-size: 0.7rem; color: var(--accent); letter-spacing: 2px;">Capacidad del Enlace</h6>
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold text-white">Streaming 4K / 8K</span>
-                        <span id="l-stream" class="badge bg-dark text-muted">ESPERANDO</span>
-                    </div>
-                    <div class="progress"><div id="b-stream" class="progress-bar bg-info" style="width: 0%"></div></div>
-                </div>
-                <div class="mb-2">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold text-white">Gaming Competitivo</span>
-                        <span id="l-game" class="badge bg-dark text-muted">ESPERANDO</span>
-                    </div>
-                    <div class="progress"><div id="b-game" class="progress-bar bg-warning text-dark" style="width: 0%"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-7 col-md-10">
-            <div class="text-start mb-3 px-2"><h5 class="fw-bold text-white small text-uppercase">Diagnóstico Profesional</h5></div>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="diag-card text-start">
-                        <i class="bi bi-clock-history text-primary"></i>
-                        <div class="diag-title small">Latencia</div>
-                        <div class="diag-desc">Mide el retraso de ida y vuelta de los datos.</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="diag-card text-start">
-                        <i class="bi bi-cloud-arrow-up text-info"></i>
-                        <div class="diag-title small">Subida</div>
-                        <div class="diag-desc">Velocidad para enviar archivos o transmitir.</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="diag-card text-start">
-                        <i class="bi bi-reception-4 text-warning"></i>
-                        <div class="diag-title small">Estabilidad</div>
-                        <div class="diag-desc">Consistencia de la señal sin pérdidas de datos.</div>
-                    </div>
+            <div class="glass-card p-3 animate__animated animate__fadeInUp">
+                <h6 class="text-start small fw-bold text-uppercase mb-3" style="color: var(--accent); letter-spacing: 1px;">Guía de Calidad</h6>
+                <div class="table-responsive">
+                    <table class="table table-borderless reference-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>Velocidad</th>
+                                <th>Latencia</th>
+                                <th>Uso Ideal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-success w-100">Óptimo</span></td>
+                                <td>> 50 Mbps</td>
+                                <td>< 30 ms</td>
+                                <td>Streaming 4K / Pro Gaming</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-warning text-dark w-100">Regular</span></td>
+                                <td>20 - 50 Mbps</td>
+                                <td>30 - 60 ms</td>
+                                <td>HD Streaming / Trabajo</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger w-100">Mala</span></td>
+                                <td>< 20 Mbps</td>
+                                <td>> 60 ms</td>
+                                <td>Navegación Básica</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -237,7 +195,7 @@
                 </div>
                 <div class="game-row">
                     <span class="game-name">Call of Duty</span>
-                    <span class="badge ping-badge bg-success">48 ms</span>
+                    <span class="badge ping-badge bg-warning text-dark">55 ms</span>
                 </div>
                 <div class="game-row">
                     <span class="game-name">GTA V RP</span>
@@ -251,52 +209,61 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     async function getNetInfo() {
-        const ispEl = document.getElementById('userIsp');
-        const locEl = document.getElementById('userLoc');
-        const apis = ['https://ipapi.co/json/', 'https://ip-api.com/json/'];
-
-        for (let api of apis) {
-            try {
-                const response = await fetch(api);
-                const data = await response.json();
-                if (data.isp || data.org) {
-                    ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${data.isp || data.org}`;
-                    locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> ${data.city || 'Ubicación'}`;
-                    return; 
-                }
-            } catch (e) { continue; }
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            document.getElementById('userIsp').innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${data.isp || data.org}`;
+            document.getElementById('userLoc').innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> ${data.city || 'Barinas'}`;
+        } catch (e) {
+            document.getElementById('userIsp').innerText = "Red Local Detectada";
         }
     }
-
     getNetInfo();
 
     function runTest() {
         let s = 0;
         const btn = document.getElementById('runBtn');
+        const speedDisplay = document.getElementById('speedValue');
+        const statusIcon = document.getElementById('pStatus');
+        
         btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-grow spinner-grow-sm me-2"></span>Analizando...`;
+        btn.innerHTML = `<span class="spinner-grow spinner-grow-sm me-2"></span>Midiendo...`;
 
         const timer = setInterval(() => {
-            s += Math.random() * 9.8;
-            document.getElementById('speedValue').innerText = s.toFixed(1);
-            const p = Math.min((s / 65) * 100, 100);
-            document.getElementById('b-stream').style.width = p + '%';
-            document.getElementById('b-game').style.width = Math.min(p * 1.1, 100) + '%';
+            s += Math.random() * 8.5;
+            speedDisplay.innerText = s.toFixed(1);
             
-            if(p > 80) {
-                document.getElementById('l-stream').innerText = 'ÓPTIMO';
-                document.getElementById('l-stream').className = 'badge bg-success text-white';
-            }
-            if(p > 60) {
-                document.getElementById('l-game').innerText = 'EXCELENTE';
-                document.getElementById('l-game').className = 'badge bg-warning text-dark';
+            // Cambio de color en tiempo real según la velocidad
+            if(s < 20) {
+                speedDisplay.className = "display-speed status-low";
+            } else if(s < 50) {
+                speedDisplay.className = "display-speed status-mid";
+            } else {
+                speedDisplay.className = "display-speed status-high";
             }
 
             if(s > 64.9) {
                 clearInterval(timer);
-                document.getElementById('pPing').innerText = "25ms";
-                document.getElementById('pUp').innerText = "21.7";
-                document.getElementById('pJitter').innerText = "2ms";
+                
+                // Valores finales simulados
+                const ping = 25;
+                const up = 21.7;
+                const jitter = 2;
+
+                // Asignar valores y colores
+                document.getElementById('pPing').innerText = ping + "ms";
+                document.getElementById('pPing').className = "fw-bold " + (ping < 30 ? "text-success" : "text-warning");
+                
+                document.getElementById('pUp').innerText = up;
+                document.getElementById('pUp').className = "fw-bold " + (up > 15 ? "text-info" : "text-warning");
+                
+                document.getElementById('pJitter').innerText = jitter + "ms";
+                document.getElementById('pJitter').className = "fw-bold text-success";
+
+                // Estado Final
+                statusIcon.innerHTML = `<i class="bi bi-check-circle-fill"></i>`;
+                statusIcon.className = "fw-bold text-success";
+                
                 btn.disabled = false;
                 btn.innerHTML = `<i class="bi bi-arrow-clockwise me-2"></i> Repetir Análisis`;
             }
