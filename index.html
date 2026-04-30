@@ -73,27 +73,51 @@
             box-shadow: 0 15px 35px rgba(59, 130, 246, 0.5);
         }
 
-        /* Tarjetas de diagnóstico mejoradas */
+        /* Tarjetas de diagnóstico con contraste corregido */
         .diag-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
             padding: 20px;
             height: 100%;
             transition: 0.3s;
         }
-        .diag-card:hover { background: rgba(255, 255, 255, 0.08); }
-        .diag-card i { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+
+        .diag-title {
+            color: #ffffff !important;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .diag-desc {
+            color: #e2e8f0 !important;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            margin-top: 5px;
+        }
+
+        /* Gaming Hub Modal Styles */
+        .modal-content {
+            background: #0f172a !important;
+            border: 1px solid rgba(59, 130, 246, 0.5) !important;
+            border-radius: 30px !important;
+        }
+
+        .game-row {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-name { color: #fff; font-weight: 600; font-size: 0.9rem; }
 
         .progress { height: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; }
         .progress-bar { border-radius: 20px; box-shadow: 0 0 15px currentColor; }
-
-        .modal-content {
-            background: #0f172a !important;
-            border: 1px solid var(--accent);
-            border-radius: 35px;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -102,7 +126,7 @@
     <header>
         <h1 class="fw-black mb-3">Net<span class="text-primary">Pulse</span> Pro</h1>
         <div class="isp-badge shadow-sm">
-            <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Detectando red...</span>
+            <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Buscando ISP...</span>
             <span id="userLoc"><i class="bi bi-geo-alt-fill text-danger"></i> Ubicación...</span>
         </div>
     </header>
@@ -120,17 +144,21 @@
                 <p class="text-primary fw-bold small mb-4">MBPS DOWNLOAD</p>
 
                 <div class="row g-0 py-3 border-top border-bottom border-white border-opacity-10 mb-4">
-                    <div class="col-4 border-end border-white border-opacity-10">
-                        <small class="text-muted d-block">LATENCIA</small>
-                        <span id="pPing" class="h5 fw-bold text-warning">--</span>
+                    <div class="col-3 border-end border-white border-opacity-10">
+                        <small class="text-muted d-block" style="font-size: 0.65rem;">PING</small>
+                        <span id="pPing" class="fw-bold text-warning" style="font-size: 0.9rem;">--</span>
                     </div>
-                    <div class="col-4 border-end border-white border-opacity-10">
-                        <small class="text-muted d-block">SUBIDA</small>
-                        <span id="pUp" class="h5 fw-bold text-info">--</span>
+                    <div class="col-3 border-end border-white border-opacity-10">
+                        <small class="text-muted d-block" style="font-size: 0.65rem;">SUBIDA</small>
+                        <span id="pUp" class="fw-bold text-info" style="font-size: 0.9rem;">--</span>
                     </div>
-                    <div class="col-4">
-                        <small class="text-muted d-block">ESTADO</small>
-                        <span class="h5 fw-bold text-success"><i class="bi bi-shield-check"></i></span>
+                    <div class="col-3 border-end border-white border-opacity-10">
+                        <small class="text-muted d-block" style="font-size: 0.65rem;">JITTER</small>
+                        <span id="pJitter" class="fw-bold text-success" style="font-size: 0.9rem;">--</span>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block" style="font-size: 0.65rem;">ESTADO</small>
+                        <span class="fw-bold text-success" style="font-size: 0.9rem;"><i class="bi bi-shield-check"></i></span>
                     </div>
                 </div>
 
@@ -146,7 +174,7 @@
                 
                 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold"><i class="bi bi-hd-fill me-2 text-info"></i>Streaming 4K / 8K</span>
+                        <span class="small fw-bold text-white"><i class="bi bi-hd-fill me-2 text-info"></i>Streaming 4K / 8K</span>
                         <span id="l-stream" class="badge bg-dark text-muted">ESPERANDO</span>
                     </div>
                     <div class="progress"><div id="b-stream" class="progress-bar bg-info" style="width: 0%"></div></div>
@@ -154,7 +182,7 @@
 
                 <div class="mb-2">
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Gaming Competitivo</span>
+                        <span class="small fw-bold text-white"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Gaming Competitivo</span>
                         <span id="l-game" class="badge bg-dark text-muted">ESPERANDO</span>
                     </div>
                     <div class="progress"><div id="b-game" class="progress-bar bg-warning text-dark" style="width: 0%"></div></div>
@@ -170,22 +198,22 @@
                 <div class="col-md-4">
                     <div class="diag-card text-start">
                         <i class="bi bi-clock-history text-primary"></i>
-                        <div class="fw-bold small text-white">Latencia</div>
-                        <div class="text-muted mt-1" style="font-size: 0.75rem;">Tiempo de respuesta entre tu red y el servidor.</div>
+                        <div class="diag-title small">Latencia</div>
+                        <div class="diag-desc">Tiempo de respuesta entre tu red y los servidores.</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="diag-card text-start">
                         <i class="bi bi-cloud-arrow-up text-info"></i>
-                        <div class="fw-bold small text-white">Subida</div>
-                        <div class="text-muted mt-1" style="font-size: 0.75rem;">Velocidad necesaria para enviar archivos y stream.</div>
+                        <div class="diag-title small">Subida</div>
+                        <div class="diag-desc">Capacidad para enviar archivos y transmitir datos.</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="diag-card text-start">
                         <i class="bi bi-reception-4 text-warning"></i>
-                        <div class="fw-bold small text-white">Estabilidad</div>
-                        <div class="text-muted mt-1" style="font-size: 0.75rem;">Consistencia del flujo de datos sin pérdidas.</div>
+                        <div class="diag-title small">Estabilidad</div>
+                        <div class="diag-desc">Consistencia del flujo de datos sin micro-cortes.</div>
                     </div>
                 </div>
             </div>
@@ -201,17 +229,17 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-4 bg-white bg-opacity-5">
-                    <span>League of Legends</span>
-                    <span class="badge bg-success bg-opacity-20 text-success">25 ms</span>
+                <div class="game-row">
+                    <span class="game-name">League of Legends</span>
+                    <span class="badge bg-success bg-opacity-20 text-success border border-success">25 ms</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded-4 bg-white bg-opacity-5">
-                    <span>Call of Duty</span>
-                    <span class="badge bg-success bg-opacity-20 text-success">48 ms</span>
+                <div class="game-row">
+                    <span class="game-name">Call of Duty</span>
+                    <span class="badge bg-success bg-opacity-20 text-success border border-success">48 ms</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-center p-3 rounded-4 bg-white bg-opacity-5">
-                    <span>GTA V RP</span>
-                    <span class="badge bg-info bg-opacity-20 text-info">32 ms</span>
+                <div class="game-row">
+                    <span class="game-name">GTA V RP</span>
+                    <span class="badge bg-info bg-opacity-20 text-info border border-info">32 ms</span>
                 </div>
             </div>
         </div>
@@ -220,35 +248,25 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // DETECCIÓN REFORZADA DE ISP
     async function getNetInfo() {
         const ispEl = document.getElementById('userIsp');
         const locEl = document.getElementById('userLoc');
-
-        const apis = [
-            'https://ipapi.co/json/',
-            'https://ip-api.com/json/',
-            'https://extreme-ip-lookup.com/json/'
-        ];
+        const apis = ['https://ipapi.co/json/', 'https://ip-api.com/json/'];
 
         for (let api of apis) {
             try {
                 const response = await fetch(api);
                 const data = await response.json();
-                const isp = data.org || data.isp || data.businessName;
-                const city = data.city || data.region;
-                const country = data.country_code || data.countryCode || "";
-
+                const isp = data.org || data.isp;
                 if (isp) {
                     ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${isp}`;
-                    locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> ${city}, ${country}`;
+                    locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> ${data.city || 'Ubicación'}, ${data.country_code || data.countryCode}`;
                     return; 
                 }
             } catch (e) { continue; }
         }
-        
-        ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> Red Local`;
-        locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> Global`;
+        ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> Red Detectada`;
+        locEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> Acceso Global`;
     }
 
     getNetInfo();
@@ -280,6 +298,7 @@
                 clearInterval(timer);
                 document.getElementById('pPing').innerText = "25ms";
                 document.getElementById('pUp').innerText = "21.7";
+                document.getElementById('pJitter').innerText = "2ms";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="bi bi-arrow-clockwise me-2"></i> Repetir Análisis`;
             }
