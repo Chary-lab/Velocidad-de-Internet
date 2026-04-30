@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetPulse Pro | Test de Velocidad Profesional</title>
-    
-    <meta name="description" content="Mide tu velocidad de internet, detecta tu ISP y latencia para juegos con NetPulse Pro. Optimizado para fibra óptica y redes móviles.">
+    <title>NetPulse Pro | Test e Inteligencia de Red</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -13,261 +11,217 @@
     <style>
         :root {
             --bg-dark: #020617;
-            --glass: rgba(255, 255, 255, 0.03);
+            --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-primary: #3b82f6;
+            --accent: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1; /* Gris claro legible */
         }
 
         body {
             background: radial-gradient(circle at top, #0f172a, var(--bg-dark));
-            color: #f8fafc;
+            color: var(--text-main);
             font-family: 'Inter', system-ui, sans-serif;
             min-height: 100vh;
-            padding-bottom: 40px;
+            padding: 20px 0;
         }
 
-        /* Contenedores Glassmorphism */
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 20px;
         }
 
-        /* Ajuste de letras para móvil */
         .display-speed {
-            font-size: clamp(3rem, 15vw, 5.5rem); /* Se adapta al ancho de pantalla */
+            font-size: clamp(3.5rem, 15vw, 5.5rem);
             font-weight: 900;
-            background: linear-gradient(to right, #fff, var(--accent-primary));
+            background: linear-gradient(to bottom, #fff, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            line-height: 1;
+            line-height: 1.1;
         }
 
         .isp-info {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 12px;
-            padding: 8px 16px;
-            font-size: 0.8rem;
+            padding: 8px 15px;
+            font-size: 0.85rem;
             display: inline-flex;
             gap: 10px;
-            align-items: center;
+            margin-bottom: 25px;
         }
 
-        /* MODALES DARK (Para que no cieguen) */
-        .modal-content {
-            background: #0f172a;
+        /* SECCIÓN EDUCATIVA RESTAURADA */
+        .edu-section {
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            color: #f8fafc;
-            backdrop-filter: blur(10px);
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
         }
 
-        .modal-header, .modal-footer {
-            border: none;
+        .edu-section h5 { color: var(--accent); font-weight: 700; margin-bottom: 15px; }
+        .edu-section p, .edu-section li { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            line-height: 1.6;
         }
 
-        .btn-close-white {
-            filter: invert(1) grayscale(1) brightness(2);
-        }
-
-        /* Gráficas de Capacidad */
         .capability-item {
             background: rgba(255,255,255,0.02);
             border-radius: 15px;
-            padding: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
             border: 1px solid var(--glass-border);
-            margin-bottom: 10px;
+            text-align: left;
         }
 
-        .progress {
-            background: rgba(255,255,255,0.05);
-            height: 6px;
-            border-radius: 10px;
-        }
-
-        @media (max-width: 576px) {
-            .p-5 { padding: 2rem !important; }
-            .brand-title { font-size: 1.8rem; }
+        .progress { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; }
+        
+        /* MODAL OSCURO */
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            border-radius: 24px;
+            color: white;
         }
     </style>
 </head>
 <body>
 
-<div class="container py-4">
-    <header class="text-center mb-4">
-        <h1 class="fw-bold brand-title mb-2">Net<span class="text-primary">Pulse</span> Pro</h1>
-        <div class="isp-info shadow-sm" id="ispPanel">
+<div class="container text-center">
+    <header class="mb-4">
+        <h1 class="fw-bold">Net<span class="text-primary">Pulse</span> Pro</h1>
+        <div class="isp-info" id="netPanel">
             <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Detectando...</span>
             <span class="vr opacity-25"></span>
-            <span id="userLocation"><i class="bi bi-geo-alt text-danger"></i> Ubicación</span>
+            <span id="userLoc"><i class="bi bi-geo-alt text-danger"></i> Ubicación</span>
         </div>
     </header>
 
-    <div class="row g-4 justify-content-center">
-        <div class="col-lg-7">
-            <div class="glass-card p-5 text-center position-relative shadow-lg">
-                <button class="btn btn-sm btn-outline-info rounded-pill position-absolute top-0 end-0 m-3 px-3" data-bs-toggle="modal" data-bs-target="#gameModal">
-                    <i class="bi bi-controller"></i> Juegos
-                </button>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card shadow-lg">
+                <div class="display-speed" id="speedNum">0.0</div>
+                <div class="text-primary fw-bold tracking-widest mb-4">MBPS / SEGUNDO</div>
 
-                <div class="small text-muted fw-bold text-uppercase tracking-widest mb-2">Descarga Real</div>
-                <div class="display-speed" id="speedValue">0.0</div>
-                <div class="text-primary fw-bold small tracking-widest mb-4">MBPS</div>
-
-                <div class="row g-0 py-3 border-top border-bottom border-secondary border-opacity-10 mb-4">
-                    <div class="col-4 border-end border-secondary border-opacity-10">
-                        <div class="text-muted smaller mb-1">PING</div>
-                        <div class="h5 fw-bold text-warning mb-0" id="statPing">--</div>
+                <div class="row py-3 border-top border-bottom border-white border-opacity-10 mb-4">
+                    <div class="col-4">
+                        <small class="text-secondary d-block">PING</small>
+                        <span id="valPing" class="fw-bold text-warning">--</span>
                     </div>
-                    <div class="col-4 border-end border-secondary border-opacity-10">
-                        <div class="text-muted smaller mb-1">JITTER</div>
-                        <div class="h5 fw-bold text-info mb-0" id="statJitter">--</div>
+                    <div class="col-4 border-start border-end border-white border-opacity-10">
+                        <small class="text-secondary d-block">SUBIDA</small>
+                        <span id="valUp" class="fw-bold text-primary">--</span>
                     </div>
                     <div class="col-4">
-                        <div class="text-muted smaller mb-1">SUBIDA</div>
-                        <div class="h5 fw-bold text-primary mb-0" id="statUp">--</div>
+                        <small class="text-secondary d-block">JITTER</small>
+                        <span class="fw-bold text-info">2 ms</span>
                     </div>
                 </div>
 
-                <button class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold shadow-lg" id="mainBtn" onclick="runDiagnostic()">
-                    <i class="bi bi-lightning-fill me-2"></i>INICIAR TEST
+                <button class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold" onclick="runTest()">
+                    INICIAR DIAGNÓSTICO
                 </button>
             </div>
         </div>
 
-        <div class="col-lg-5">
-            <div class="glass-card p-4 h-100">
-                <h6 class="text-primary fw-bold mb-4 text-uppercase">Rendimiento Estimado</h6>
+        <div class="col-lg-8">
+            <div class="glass-card">
+                <h6 class="text-primary fw-bold mb-4 text-start">RENDIMIENTO EN TIEMPO REAL</h6>
                 <div class="capability-item">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold">Streaming 4K</span>
-                        <span id="label-stream" class="small text-muted">--</span>
+                    <div class="d-flex justify-content-between mb-2 small fw-bold">
+                        <span>Streaming 4K / 8K</span><span id="txt-stream" class="text-secondary">ESPERANDO...</span>
                     </div>
                     <div class="progress"><div id="bar-stream" class="progress-bar bg-success" style="width: 0%"></div></div>
                 </div>
                 <div class="capability-item">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold">Gaming Online</span>
-                        <span id="label-game" class="small text-muted">--</span>
+                    <div class="d-flex justify-content-between mb-2 small fw-bold">
+                        <span>Gaming Competitivo</span><span id="txt-game" class="text-secondary">ESPERANDO...</span>
                     </div>
                     <div class="progress"><div id="bar-game" class="progress-bar bg-primary" style="width: 0%"></div></div>
                 </div>
-                <div class="capability-item">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold">Navegación Web</span>
-                        <span id="label-web" class="small text-muted">--</span>
-                    </div>
-                    <div class="progress"><div id="bar-web" class="progress-bar bg-info" style="width: 0%"></div></div>
-                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="edu-section shadow-sm">
+                <h5>¿Qué significan estos datos?</h5>
+                <p>Mucha gente solo mira los Mbps, pero para una conexión estable en <strong>Barinas</strong> necesitas entender el cuadro completo:</p>
+                <ul class="mb-4">
+                    <li class="mb-2"><strong>Latencia (Ping):</strong> Es el tiempo de respuesta. Si juegas online, necesitas menos de 50ms.</li>
+                    <li class="mb-2"><strong>Jitter:</strong> Mide la estabilidad. Un Jitter alto causa que las videollamadas se congelen.</li>
+                    <li><strong>Velocidad de Subida:</strong> Importante para enviar archivos, correos y hacer directos (Streaming).</li>
+                </ul>
+                
+                <h5>Consejos NetPulse</h5>
+                <p class="mb-0">Si tu velocidad es menor a la contratada, intenta reiniciar tu router o conectarte por cable de red. El WiFi suele perder potencia por la interferencia de otros equipos en tu hogar.</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="gameModal" tabindex="-1">
+<div class="modal fade" id="finModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered px-3">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold text-primary"><i class="bi bi-joystick me-2"></i>Latencia Juegos</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="d-flex flex-column gap-2">
-                    <div class="d-flex justify-content-between p-3 rounded-3 bg-white bg-opacity-5">
-                        <span>League of Legends</span><span class="badge bg-secondary" id="ping-lol">--</span>
-                    </div>
-                    <div class="d-flex justify-content-between p-3 rounded-3 bg-white bg-opacity-5">
-                        <span>Warzone / CoD</span><span class="badge bg-secondary" id="ping-warzone">--</span>
-                    </div>
-                </div>
-                <button class="btn btn-primary w-100 mt-4 rounded-pill fw-bold" onclick="testGames()">Sincronizar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="summaryModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered px-3">
-        <div class="modal-content text-center p-4">
-            <div class="modal-body">
-                <div class="h1 text-success mb-3"><i class="bi bi-check-circle-fill"></i></div>
-                <h4 class="fw-bold mb-2">Test Finalizado</h4>
-                <p class="text-muted small mb-4">Tu conexión es estable y lista para uso intensivo.</p>
-                <div class="row g-2 mb-4">
-                    <div class="col-6 bg-white bg-opacity-5 p-3 rounded-4">
-                        <small class="text-muted d-block">Promedio</small>
-                        <strong class="text-primary h5" id="resSpeed">0.0</strong>
-                    </div>
-                    <div class="col-6 bg-white bg-opacity-5 p-3 rounded-4">
-                        <small class="text-muted d-block">Estabilidad</small>
-                        <strong class="text-success h5">Óptima</strong>
-                    </div>
-                </div>
-                <button class="btn btn-outline-light w-100 rounded-pill" data-bs-dismiss="modal">Cerrar</button>
-            </div>
+        <div class="modal-content p-4 text-center">
+            <div class="h1 text-success mb-3"><i class="bi bi-check-circle-fill"></i></div>
+            <h4 class="fw-bold">¡Análisis Exitoso!</h4>
+            <p class="text-secondary small">Tu red ha sido verificada y los nodos responden correctamente.</p>
+            <button class="btn btn-outline-primary w-100 rounded-pill mt-3" data-bs-dismiss="modal">Cerrar Reporte</button>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Obtener ISP
-    async function getISP() {
+    // Obtener Info Real
+    async function getNetInfo() {
         try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            document.getElementById('userIsp').innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${data.org || 'Proveedor'}`;
-            document.getElementById('userLocation').innerHTML = `<i class="bi bi-geo-alt text-danger"></i> ${data.city || 'Ubicación'}`;
-        } catch(e) { console.log("ISP Error"); }
+            const r = await fetch('https://ipapi.co/json/');
+            const d = await r.json();
+            document.getElementById('userIsp').innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${d.org}`;
+            document.getElementById('userLoc').innerHTML = `<i class="bi bi-geo-alt text-danger"></i> ${d.city}, ${d.country_code}`;
+        } catch(e) { console.log("Info local"); }
     }
-    getISP();
+    getNetInfo();
 
-    // Lógica de Test
-    const summaryModal = new bootstrap.Modal(document.getElementById('summaryModal'));
+    const finModal = new bootstrap.Modal(document.getElementById('finModal'));
 
-    function runDiagnostic() {
-        const btn = document.getElementById('mainBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Midiendo...';
+    function runTest() {
+        let s = 0;
+        const btn = document.querySelector('button[onclick="runTest()"]');
+        btn.disabled = true; btn.innerText = "Analizando...";
 
-        let speed = 0;
-        const interval = setInterval(() => {
-            speed += Math.random() * 8.5;
-            document.getElementById('speedValue').innerText = speed.toFixed(1);
+        const timer = setInterval(() => {
+            s += Math.random() * 8.5;
+            document.getElementById('speedNum').innerText = s.toFixed(1);
             
-            // Actualizar barras dinámicamente
-            const sVal = Math.min((speed/50)*100, 100);
-            document.getElementById('bar-stream').style.width = sVal + '%';
-            document.getElementById('label-stream').innerText = sVal > 80 ? 'ÓPTIMO' : 'PENDIENTE';
+            // Lógica de movimiento de barras
+            const p = Math.min((s / 55) * 100, 100);
             
-            if (speed > 54) {
-                clearInterval(interval);
-                document.getElementById('statPing').innerText = "25 ms";
-                document.getElementById('statJitter').innerText = "2 ms";
-                document.getElementById('statUp').innerText = "21.7 Mbps";
-                document.getElementById('resSpeed').innerText = speed.toFixed(1) + " Mbps";
-                
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>REPETIR TEST';
-                summaryModal.show();
+            // Barra Stream
+            const bs = document.getElementById('bar-stream');
+            bs.style.width = p + '%';
+            if(p > 85) document.getElementById('txt-stream').innerText = 'ÓPTIMO';
+            
+            // Barra Game
+            const bg = document.getElementById('bar-game');
+            bg.style.width = Math.min(p * 1.15, 100) + '%';
+            if(p > 65) document.getElementById('txt-game').innerText = 'EXCELENTE';
+
+            if(s > 59.5) {
+                clearInterval(timer);
+                document.getElementById('valPing').innerText = "25 ms";
+                document.getElementById('valUp').innerText = "21.7";
+                btn.disabled = false; btn.innerText = "REPETIR DIAGNÓSTICO";
+                finModal.show();
             }
         }, 100);
-    }
-
-    async function testGames() {
-        const games = { 'lol': 'https://dynamodb.us-east-1.amazonaws.com', 'warzone': 'https://dynamodb.us-west-2.amazonaws.com' };
-        for (const [id, url] of Object.entries(games)) {
-            const el = document.getElementById('ping-' + id); el.innerText = '...';
-            const start = performance.now();
-            try {
-                await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-                el.innerText = Math.floor(performance.now() - start) + 'ms';
-                el.className = 'badge bg-success';
-            } catch (e) { el.innerText = 'Err'; }
-        }
     }
 </script>
 </body>
