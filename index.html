@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <!-- ==================== PRECONEXIONES ==================== -->
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="dns-prefetch" href="https://geolocation-db.com">
+  <link rel="dns-prefetch" href="https://ipapi.co">
   
   <!-- ==================== FAVICON LOCAL ==================== -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -161,7 +161,7 @@
       <a href="https://www.exitlag.com/aff.php?aff=10282839" target="_blank" rel="nofollow sponsored" class="btn-exitlag">⚡ Prueba ExitLag</a>
     </div>
     <div class="text-center mb-3">
-      <small>Proveedor: <span id="ispName">...</span> · <span id="connType">...</span></small>
+      <small>Proveedor: <span id="ispName">...</span> · <span id="connType">Cable / WiFi</span></small>
       <button class="btn btn-outline btn-sm ms-2 pwa-install-btn" id="installBtn" hidden>⬇️ Instalar App</button>
     </div>
 
@@ -223,7 +223,7 @@
 
   <!-- Modales -->
   <div class="modal fade" id="gamingModal" tabindex="-1" aria-labelledby="gamingModalTitle">
-    <div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);"><div class="modal-header"><h2 class="modal-title h6" id="gamingModalTitle">🎮 Gaming Hub (pings reales)</h2><button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);" aria-label="Cerrar"></button></div><div class="modal-body"><ul class="list-group list-group-flush small"><li class="list-group-item d-flex justify-content-between">League of Legends <span id="pingLol">-- ms</span></li><li class="list-group-item d-flex justify-content-between">Call of Duty <span id="pingCod">-- ms</span></li><li class="list-group-item d-flex justify-content-between">GTA V Online <span id="pingGta">-- ms</span></li></ul></div></div></div></div>
+    <div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);"><div class="modal-header"><h2 class="modal-title h6" id="gamingModalTitle">🎮 Gaming Hub</h2><button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);" aria-label="Cerrar"></button></div><div class="modal-body"><ul class="list-group list-group-flush small"><li class="list-group-item d-flex justify-content-between">League of Legends <span id="pingLol">-- ms</span></li><li class="list-group-item d-flex justify-content-between">Call of Duty <span id="pingCod">-- ms</span></li><li class="list-group-item d-flex justify-content-between">GTA V Online <span id="pingGta">-- ms</span></li></ul></div></div></div></div>
   <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalTitle">
     <div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);"><div class="modal-header"><h2 class="modal-title h6" id="shareModalTitle">Compartir</h2><button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);" aria-label="Cerrar"></button></div><div class="modal-body text-center"><div id="sharePreview" class="mb-3 p-3" style="background:var(--bg1);border-radius:1rem;"></div><div class="d-flex gap-2 flex-wrap justify-content-center"><button class="btn btn-outline btn-sm" id="downloadImageBtn">🖼️</button><button class="btn btn-outline btn-sm" id="copyResultBtn">📋</button><button class="btn btn-outline btn-sm" id="shareTwitterBtn">𝕏</button><button class="btn btn-outline btn-sm" id="shareWhatsAppBtn">💬</button></div></div></div></div></div>
 
@@ -244,8 +244,8 @@
       let history=[], lang='es', chart, liveChart, isFast=false, lastResult=null, deferredPrompt;
 
       // Traducciones
-      const T={es:{start:'INICIAR TEST',starting:'Conectando...',ping:'Midiendo ping',dl:'Descargando',ul:'Subiendo',done:'Completado',err:'Error',nohist:'Sin resultados',excellent:'Excelente',good:'Bueno',regular:'Regular',low:'Bajo',streaming:'Streaming',gaming:'Gaming',recommendations:'Recomendaciones',optimal:'Óptima',adequate:'Adecuada',insufficient:'Insuficiente',rec_excellent:'Conexión excelente para teletrabajo, streaming 4K/8K y gaming.',rec_good:'Conexión sólida. Streaming 4K y gaming con buena respuesta.',rec_regular:'Conexión funcional. HD bien, 4K puede tener cortes.',rec_low:'Conexión limitada. Gaming sufrirá lag.',rec_high_jitter:'Jitter alto. Prueba cable Ethernet.',rec_low_upload:'Subida baja. Videollamadas lentas.',rec_high_ping:'Ping alto para gaming.',bufferbloat:'Latencia bajo carga',loaded_ping:'Ping bajo carga',idle_ping:'Ping en reposo',fast_mode:'Modo rápido (5s)',share_text:'Mi velocidad: ⬇{download} Mbps ⬆{upload} Mbps, Ping {ping} ms. ¡Mídela en NetPulse Pro!',wifi:'Wi‑Fi',ethernet:'Ethernet',cellular:'Móvil',unknown:'Desconocida',yes:'Sí',no:'No'},
-        en:{start:'START TEST',starting:'Connecting...',ping:'Testing ping',dl:'Downloading',ul:'Uploading',done:'Complete',err:'Error',nohist:'No results',excellent:'Excellent',good:'Good',regular:'Regular',low:'Low',streaming:'Streaming',gaming:'Gaming',recommendations:'Recommendations',optimal:'Optimal',adequate:'Adequate',insufficient:'Insufficient',rec_excellent:'Excellent connection for remote work, 4K streaming, and gaming.',rec_good:'Solid connection. 4K streaming and gaming ok.',rec_regular:'Functional. HD ok, 4K may buffer.',rec_low:'Limited. Gaming will lag.',rec_high_jitter:'High jitter. Try Ethernet.',rec_low_upload:'Low upload.',rec_high_ping:'High ping for gaming.',bufferbloat:'Bufferbloat',loaded_ping:'Loaded ping',idle_ping:'Idle ping',fast_mode:'Fast mode (5s)',share_text:'My speed: ⬇{download} Mbps ⬆{upload} Mbps, Ping {ping} ms. Test yours at NetPulse Pro!',wifi:'Wi‑Fi',ethernet:'Ethernet',cellular:'Cellular',unknown:'Unknown',yes:'Yes',no:'No'}};
+      const T={es:{start:'INICIAR TEST',starting:'Conectando...',ping:'Midiendo ping',dl:'Descargando',ul:'Subiendo',done:'Completado',err:'Error',nohist:'Sin resultados',excellent:'Excelente',good:'Bueno',regular:'Regular',low:'Bajo',streaming:'Streaming',gaming:'Gaming',recommendations:'Recomendaciones',optimal:'Óptima',adequate:'Adecuada',insufficient:'Insuficiente',rec_excellent:'Conexión excelente para teletrabajo, streaming 4K/8K y gaming.',rec_good:'Conexión sólida. Streaming 4K y gaming con buena respuesta.',rec_regular:'Conexión funcional. HD bien, 4K puede tener cortes.',rec_low:'Conexión limitada. Gaming sufrirá lag.',rec_high_jitter:'Jitter alto. Prueba cable Ethernet.',rec_low_upload:'Subida baja. Videollamadas lentas.',rec_high_ping:'Ping alto para gaming.',bufferbloat:'Latencia bajo carga',loaded_ping:'Ping bajo carga',idle_ping:'Ping en reposo',fast_mode:'Modo rápido (5s)',share_text:'Mi velocidad: ⬇{download} Mbps ⬆{upload} Mbps, Ping {ping} ms. ¡Mídela en NetPulse Pro!',wifi:'Wi‑Fi',ethernet:'Ethernet',cellular:'Móvil',unknown:'Cable / WiFi',yes:'Sí',no:'No'},
+        en:{start:'START TEST',starting:'Connecting...',ping:'Testing ping',dl:'Downloading',ul:'Uploading',done:'Complete',err:'Error',nohist:'No results',excellent:'Excellent',good:'Good',regular:'Regular',low:'Low',streaming:'Streaming',gaming:'Gaming',recommendations:'Recommendations',optimal:'Optimal',adequate:'Adequate',insufficient:'Insufficient',rec_excellent:'Excellent connection for remote work, 4K streaming, and gaming.',rec_good:'Solid connection. 4K streaming and gaming ok.',rec_regular:'Functional. HD ok, 4K may buffer.',rec_low:'Limited. Gaming will lag.',rec_high_jitter:'High jitter. Try Ethernet.',rec_low_upload:'Low upload.',rec_high_ping:'High ping for gaming.',bufferbloat:'Bufferbloat',loaded_ping:'Loaded ping',idle_ping:'Idle ping',fast_mode:'Fast mode (5s)',share_text:'My speed: ⬇{download} Mbps ⬆{upload} Mbps, Ping {ping} ms. Test yours at NetPulse Pro!',wifi:'Wi‑Fi',ethernet:'Ethernet',cellular:'Cellular',unknown:'Cable / WiFi',yes:'Yes',no:'No'}};
       const t=k=>T[lang][k], setText=(id,txt)=>$(id).textContent=txt, random=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, show=(id,v)=>$(id).style.display=v?'':'none', progress=(id,v)=>$(id).style.width=v+'%';
       function playBeep(){try{let ctx=new(window.AudioContext||window.webkitAudioContext)(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=800;g.gain.value=0.1;o.start();o.stop(ctx.currentTime+0.15)}catch(e){}}
       const params=()=>isFast?{pingA:3,dlT:2,dlS:2e6,ulS:5e5}:{pingA:6,dlT:4,dlS:5e7,ulS:1e7};
@@ -282,7 +282,6 @@
       function streamingUL(url,data,cbProg,cbSpeed){let total=data.byteLength,start=performance.now(),lastT=start,lastB=0;return new Promise((resolve,reject)=>{let xhr=new XMLHttpRequest();xhr.open('POST',url);xhr.upload.onprogress=e=>{if(e.lengthComputable){requestAnimationFrame(()=>{cbProg(e.loaded/total*100);let now=performance.now();if(now-lastT>200){let db=e.loaded-lastB,dt=(now-lastT)/1000;cbSpeed(db*8/dt/1e6);lastT=now;lastB=e.loaded}})}};xhr.onload=()=>{if(xhr.status===200){let sec=(performance.now()-start)/1000;resolve({avgSpeed:total*8/sec/1e6})}else reject()};xhr.onerror=reject;xhr.send(new Blob([data]))})}
 
       async function runTest(){
-        // Cargar Chart.js solo ahora
         if (!window.Chart) await loadChartJS();
         let btn=$('startBtn'),g=$('gauge');btn.disabled=!0;btn.textContent=t('starting');g.classList.add('active');$('progressWrapper').hidden=!0;show('liveSpeedChart',!0);resetLiveChart();
         ['pingVal','jitterVal','dlVal','ulVal','mainSpeed'].forEach(id=>setText(id,'--'));setText('testStatus','');$('analysisCard').style.display='none';
@@ -291,18 +290,15 @@
         try{setText('testStatus',t('dl')+` (${p.dlT} hilos)...`);$('progressWrapper').hidden=!1;let r=await multiDL(p.dlT,p.dlS,s=>updateLiveChart(s));dl=r.avgSpeed;setText('dlVal',dl.toFixed(1));setText('mainSpeed',dl.toFixed(0)+' Mbps');loaded=await loadedPing(4);ok++}catch{setText('dlVal','Err')}finally{$('progressWrapper').hidden=!0}
         try{setText('testStatus',t('ul')+'...');$('progressWrapper').hidden=!1;let data=new Uint8Array(p.ulS);for(let i=0;i<p.ulS;i++)data[i]=Math.random()*256;let r=await streamingUL('https://speed.cloudflare.com/__up',data.buffer,p=>progress('progressBar',p),s=>updateLiveChart(s));ul=r.avgSpeed;setText('ulVal',ul.toFixed(1));setText('mainSpeed',ul.toFixed(0)+' Mbps');ok++}catch{setText('ulVal','N/D')}finally{$('progressWrapper').hidden=!0}
         g.classList.remove('active');btn.disabled=!1;btn.textContent=t('start');show('liveSpeedChart',!1);setText('testStatus',ok>=2?t('done'):t('err'));
-        if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);genAnalysis(idle,jitter,dl,ul,loaded);updateGamePingsReal(idle);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0}
+        if(ok>=2){setText('mainSpeed',dl.toFixed(0)+' Mbps');lastResult={ping:idle,jitter,download:dl,upload:ul,loadedPing:loaded};saveResult(idle,jitter,dl,ul,loaded);genAnalysis(idle,jitter,dl,ul,loaded);updateGamePings(idle);updateAppTable(dl,ul);$('shareBtn').disabled=!1;playBeep()}else{$('shareBtn').disabled=!0}
       }
 
+      // Pings de juegos realistas (estimación basada en ping base)
       function updateGamePings(basePing) {
-  // Distancias típicas: LoL ~ 10-30ms, CoD ~ 20-50ms, GTA V ~ 30-60ms adicionales
-  const lol = Math.round(basePing + random(10, 30));
-  const cod = Math.round(basePing + random(20, 50));
-  const gta = Math.round(basePing + random(30, 60));
-  $('pingLol').textContent = lol + ' ms';
-  $('pingCod').textContent = cod + ' ms';
-  $('pingGta').textContent = gta + ' ms';
-}
+        $('pingLol').textContent = Math.round(basePing + random(10, 30)) + ' ms';
+        $('pingCod').textContent = Math.round(basePing + random(20, 50)) + ' ms';
+        $('pingGta').textContent = Math.round(basePing + random(30, 60)) + ' ms';
+      }
 
       function genAnalysis(ping,jit,dl,ul,loaded){
         let cls='',str='',gam='',rec=[];
@@ -328,11 +324,27 @@
       async function initChart(){await loadChartJS();chart=new Chart($('speedChart'),{type:'line',data:{labels:[],datasets:[{label:'Descarga',data:[],borderColor:'#00c3ff'},{label:'Subida',data:[],borderColor:'#ff9900'}]},options:{responsive:!0,plugins:{legend:{labels:{color:'inherit'}}}}})}
       function updateChart(){if(!chart)return;chart.data.labels=history.map(r=>new Date(r.date).toLocaleTimeString());chart.data.datasets[0].data=history.map(r=>r.download);chart.data.datasets[1].data=history.map(r=>r.upload);chart.update()}
 
-      // Detección de ISP (retardada)
-      async function detectISP(){try{let r=await fetch('https://geolocation-db.com/json/'),d=await r.json();setText('ispName',d.IPv4?.isp||d.country_name||'Desconocido')}catch{setText('ispName','No disponible')}}
+      // Detección de ISP (fiable con ipapi.co)
+      async function detectISP() {
+        try {
+          const r = await fetch('https://ipapi.co/json/', {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+          });
+          const d = await r.json();
+          setText('ispName', d.org || d.isp || 'Proveedor no detectado');
+        } catch { setText('ispName', 'No disponible'); }
+      }
 
       // Tipo de conexión
-      function detectConnType(){const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;if(conn){if(conn.type==='wifi')return t('wifi');if(conn.type==='ethernet')return t('ethernet');if(conn.type==='cellular')return t('cellular')}return t('unknown')}
+      function detectConnType() {
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn && conn.type) {
+          if (conn.type === 'wifi') return t('wifi');
+          if (conn.type === 'ethernet') return t('ethernet');
+          if (conn.type === 'cellular') return t('cellular');
+        }
+        return t('unknown');
+      }
 
       // Tema
       function toggleTheme(){document.body.classList.toggle('light-mode');localStorage.setItem(DARK_KEY,document.body.classList.contains('light-mode')?'light':'dark')}
@@ -347,8 +359,8 @@
         setAutoTheme();
         let saved=localStorage.getItem(LANG_KEY);if(saved==='en'||saved==='es')lang=saved;
         $('langToggle').textContent=lang==='es'?'🌐 ES':'🌐 EN';$('startBtn').textContent=t('start');$('fastModeLabel').innerHTML=t('fast_mode')+' <span class="help-icon" data-bs-toggle="tooltip" title="Prueba ligera">?</span>';
-        setText('connType',detectConnType());
-        setTimeout(detectISP,2000);
+        setText('connType', detectConnType());
+        setTimeout(detectISP, 500);
         renderHist();initChart();
         $('startBtn').addEventListener('click',runTest);
         $('resetBtn').addEventListener('click',()=>{['pingVal','jitterVal','dlVal','ulVal','mainSpeed','testStatus'].forEach(id=>setText(id,'--'));$('gauge').classList.remove('active');$('startBtn').disabled=!1;$('progressWrapper').hidden=!0;show('liveSpeedChart',!1);$('analysisCard').style.display='none';$('shareBtn').disabled=!0;['pingLol','pingCod','pingGta'].forEach(id=>setText(id,'-- ms'));['appNetflix','appYoutube','appTwitch','appGeForce'].forEach(id=>setText(id,'-'))});
