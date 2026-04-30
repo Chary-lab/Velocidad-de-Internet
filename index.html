@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetPulse Pro | Diagnóstico Definitivo</title>
+    <title>NetPulse Pro | Diagnóstico Global</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -42,7 +42,6 @@
             line-height: 1.1;
         }
 
-        /* ISP BADGE */
         .isp-info {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
@@ -54,7 +53,6 @@
             margin-bottom: 25px;
         }
 
-        /* MODAL DARK (Corrección de la mancha blanca) */
         .modal-content {
             background: #0f172a !important;
             border: 1px solid var(--accent);
@@ -74,7 +72,6 @@
             color: white !important;
         }
 
-        /* SECCIÓN INFORMATIVA */
         .edu-box {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -101,7 +98,7 @@
     <header class="mb-4">
         <h1 class="fw-bold">Net<span class="text-primary">Pulse</span> Pro</h1>
         <div class="isp-info" id="netPanel">
-            <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Detectando ISP...</span>
+            <span id="userIsp"><i class="bi bi-broadcast text-primary"></i> Detectando red...</span>
             <span id="userLoc"><i class="bi bi-geo-alt text-danger"></i> Ubicación...</span>
         </div>
     </header>
@@ -160,16 +157,16 @@
         <div class="col-lg-8">
             <div class="edu-box shadow-sm">
                 <h5 class="text-primary fw-bold mb-3 small">¿Qué significan estos datos?</h5>
-                <p class="text-readable">En <strong>Barinas</strong>, una conexión estable requiere más que solo "velocidad":</p>
+                <p class="text-readable">Una conexión estable requiere un equilibrio entre velocidad y calidad de señal:</p>
                 <ul class="text-readable">
-                    <li><strong>Latencia (Ping):</strong> Tu tiempo de reacción. Ideal: menos de 40ms.</li>
-                    <li><strong>Jitter:</strong> Si es alto, tus videollamadas se cortarán.</li>
-                    <li><strong>Subida:</strong> Clave para enviar archivos y teletrabajo.</li>
+                    <li><strong>Latencia (Ping):</strong> Es el tiempo de respuesta. Para actividades en tiempo real, lo ideal es menos de 40ms.</li>
+                    <li><strong>Jitter:</strong> Mide la estabilidad. Un jitter alto provoca cortes en llamadas y juegos.</li>
+                    <li><strong>Velocidad de Subida:</strong> Es fundamental para videoconferencias, directos y envío de archivos.</li>
                 </ul>
                 
                 <div class="advice-box">
-                    <h6 class="text-primary fw-bold small mb-2">Consejo de Optimización</h6>
-                    <p class="text-readable mb-0" style="font-size: 0.85rem;">Si tu Jitter supera los 20ms, evita jugar por WiFi. El ruido electromagnético local afecta la estabilidad de tu señal.</p>
+                    <h6 class="text-primary fw-bold small mb-2">Consejo Técnico</h6>
+                    <p class="text-readable mb-0" style="font-size: 0.85rem;">Si notas inestabilidad en la señal, intenta priorizar una conexión vía cable Ethernet. Las redes inalámbricas suelen sufrir interferencias de otros dispositivos cercanos.</p>
                 </div>
             </div>
         </div>
@@ -203,19 +200,28 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Detección de ISP mejorada
     async function getNetInfo() {
         const ispEl = document.getElementById('userIsp');
         const locEl = document.getElementById('userLoc');
         try {
+            // Intento con API 1
             const r = await fetch('https://ipapi.co/json/');
             if (!r.ok) throw new Error();
             const d = await r.json();
-            ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${d.org}`;
-            locEl.innerHTML = `<i class="bi bi-geo-alt text-danger"></i> ${d.city}, ${d.country_code}`;
+            ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> ${d.org || 'Proveedor no detectado'}`;
+            locEl.innerHTML = `<i class="bi bi-geo-alt text-danger"></i> ${d.city || 'Desconocida'}, ${d.country_code || 'Global'}`;
         } catch(e) {
-            ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> Red Local`;
-            locEl.innerHTML = `<i class="bi bi-geo-alt text-danger"></i> Barinas, VE`;
+            // Intento con API 2 en caso de fallo
+            fetch('https://edns.ip-api.com/json')
+                .then(res => res.json())
+                .then(data => {
+                    ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> Red Detectada`;
+                    locEl.innerHTML = `<i class="bi bi-geo-alt text-danger"></i> Acceso Local`;
+                })
+                .catch(() => {
+                    ispEl.innerHTML = `<i class="bi bi-broadcast text-primary"></i> Proveedor no detectado`;
+                    locEl.innerHTML = `<i class="bi bi-geo-alt text-danger"></i> Ubicación no detectada`;
+                });
         }
     }
     getNetInfo();
