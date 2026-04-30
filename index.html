@@ -11,182 +11,69 @@
 
   <!-- ==================== ESTILOS PERSONALIZADOS ==================== -->
   <style>
-    /* ---------- VARIABLES Y MODO OSCURO ---------- */
     :root {
-      --bg: #0b1120;
-      --text: #ffffff;
-      --accent: #3b82f6;
-      --glass: rgba(15, 23, 42, 0.85);
-      --border: rgba(59, 130, 246, 0.4);
-      --card-bg: rgba(0, 0, 0, 0.5);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      --bg: #0b1120; --text: #ffffff; --accent: #3b82f6;
+      --glass: rgba(15,23,42,0.85); --border: rgba(59,130,246,0.4);
+      --card-bg: rgba(0,0,0,0.5); --shadow: 0 8px 32px rgba(0,0,0,0.7);
       --btn-outline: #fff;
     }
-
     body.light-mode {
-      --bg: #f1f5f9;
-      --text: #1e293b;
-      --glass: rgba(255, 255, 255, 0.85);
-      --border: rgba(0, 0, 0, 0.15);
-      --card-bg: rgba(255, 255, 255, 0.7);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --bg: #f1f5f9; --text: #1e293b;
+      --glass: rgba(255,255,255,0.85); --border: rgba(0,0,0,0.15);
+      --card-bg: rgba(255,255,255,0.7); --shadow: 0 8px 32px rgba(0,0,0,0.1);
       --btn-outline: #1e293b;
     }
-
-    /* ---------- ESTILOS GENERALES ---------- */
     body {
       background: linear-gradient(145deg, var(--bg), #1e293b);
-      color: var(--text);
-      font-family: system-ui, sans-serif;
-      margin: 0;
+      color: var(--text); font-family: system-ui, sans-serif; margin: 0;
     }
-
     .navbar, .card-custom {
-      background: var(--glass);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      background: var(--glass); backdrop-filter: blur(14px);
+      border: 1px solid var(--border); box-shadow: var(--shadow);
     }
+    .navbar { padding: 0.5rem 1rem; }
+    .card-custom { border-radius: 1.2rem; padding: 1.5rem; margin-bottom: 1.5rem; }
 
-    .navbar {
-      padding: 0.5rem 1rem;
-    }
-
-    .card-custom {
-      border-radius: 1.2rem;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    /* ---------- MEDIDOR PRINCIPAL ---------- */
     .gauge-circle {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      border: 10px solid rgba(255, 255, 255, 0.15);
-      background: var(--card-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0 auto 1rem;
+      width: 150px; height: 150px; border-radius: 50%;
+      border: 10px solid rgba(255,255,255,0.15); background: var(--card-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700; margin: 0 auto 1rem;
     }
+    .gauge-circle.active { border-top-color: var(--accent); animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .gauge-circle.active {
-      border-top-color: var(--accent);
-      animation: spin 0.8s linear infinite;
-    }
+    .metric-box { background: var(--card-bg); border-radius: 0.8rem; padding: 0.8rem; text-align: center; }
+    .metric-box .value { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    .btn-primary { background: var(--accent); border: none; padding: 0.6rem 2rem; border-radius: 2rem; font-weight: 600; }
+    .btn-primary:hover { background: #2563eb; }
 
-    .metric-box {
-      background: var(--card-bg);
-      border-radius: 0.8rem;
-      padding: 0.8rem;
-      text-align: center;
-    }
+    .btn-outline-light, .btn-outline-dark { border-color: var(--btn-outline); color: var(--btn-outline); }
+    .btn-outline-light:hover, .btn-outline-dark:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    .metric-box .value {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--accent);
-    }
+    .progress { background: rgba(255,255,255,0.2); border-radius: 1rem; height: 20px; }
+    .progress-bar { background: var(--accent); font-size: 0.75rem; line-height: 20px; border-radius: 1rem; color: #fff; }
+    .progress-bar-striped { background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent); background-size: 1rem 1rem; }
 
-    /* ---------- BOTONES ---------- */
-    .btn-primary {
-      background: var(--accent);
-      border: none;
-      padding: 0.6rem 2rem;
-      border-radius: 2rem;
-      font-weight: 600;
-    }
-
-    .btn-primary:hover {
-      background: #2563eb;
-    }
-
-    .btn-outline-light, .btn-outline-dark {
-      border-color: var(--btn-outline);
-      color: var(--btn-outline);
-    }
-
-    .btn-outline-light:hover, .btn-outline-dark:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    /* ---------- BARRAS DE PROGRESO ---------- */
-    .progress {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 1rem;
-      height: 20px;
-    }
-
-    .progress-bar {
-      background: var(--accent);
-      font-size: 0.75rem;
-      line-height: 20px;
-      border-radius: 1rem;
-      color: #fff;
-    }
-
-    /* ---------- TABLA DE CALIDAD ---------- */
-    .quality-row {
-      transition: all 0.2s ease;
-      border-radius: 0.5rem;
-    }
-
-    .quality-row:hover {
-      background: rgba(59, 130, 246, 0.08);
-    }
-
+    .quality-row { transition: all 0.2s ease; border-radius: 0.5rem; }
+    .quality-row:hover { background: rgba(59,130,246,0.08); }
     #qualityTable tbody tr.table-active {
-      background: var(--accent) !important;
-      color: white !important;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      background: var(--accent) !important; color: white !important;
+      font-weight: 600; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(59,130,246,0.4);
     }
+    #qualityTable tbody tr.table-active td:first-child::after { content: ' ✅'; }
 
-    #qualityTable tbody tr.table-active td:first-child::after {
-      content: ' ✅';
-    }
-
-    /* ---------- LISTA DEL HISTORIAL ---------- */
     .list-group-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--text);          /* asegura visibilidad en ambos modos */
+      background: var(--card-bg); border: 1px solid var(--border); color: var(--text);
     }
+    .list-group-item small, .card-custom small, .metric-box small { color: inherit; opacity: 0.85; }
 
-    .list-group-item small,
-    .card-custom small,
-    .metric-box small {
-      color: inherit;
-      opacity: 0.85;
-    }
+    footer { opacity: 0.6; font-size: 0.8rem; }
+    canvas { max-height: 200px; }
 
-    /* ---------- PIE DE PÁGINA ---------- */
-    footer {
-      opacity: 0.6;
-      font-size: 0.8rem;
-    }
-
-    /* ---------- GRÁFICO ---------- */
-    canvas {
-      max-height: 200px;
-    }
-
-    /* ---------- HISTORIAL STICKY EN ESCRITORIO ---------- */
     @media (min-width: 992px) {
-      .history-col {
-        position: sticky;
-        top: 1rem;
-      }
+      .history-col { position: sticky; top: 1rem; }
     }
   </style>
 </head>
@@ -208,9 +95,8 @@
     </div>
 
     <div class="row">
-      <!-- ---------- COLUMNA IZQUIERDA (TEST + GUÍAS) ---------- -->
       <div class="col-lg-8">
-        <!-- MEDIDOR -->
+        <!-- MEDIDOR PRINCIPAL -->
         <div class="card-custom text-center" id="testSection">
           <div class="gauge-circle" id="gauge"><span id="mainSpeed">--</span></div>
           <div class="row g-2 mb-3">
@@ -223,6 +109,10 @@
             <div class="col-4">
               <div class="metric-box"><small>SUBIDA</small><div class="value" id="ulVal">--</div><small>Mbps</small></div>
             </div>
+          </div>
+          <!-- Barra de progreso dinámica -->
+          <div class="progress mb-3" style="height: 8px;" id="progressWrapper" hidden>
+            <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" style="width: 0%"></div>
           </div>
           <button class="btn btn-primary btn-lg" id="startBtn">INICIAR TEST</button>
           <div id="testStatus" class="mt-2 fw-bold small"></div>
@@ -241,7 +131,7 @@
           </div>
         </div>
 
-        <!-- GUÍAS (CALIDAD + GAMING HUB) -->
+        <!-- GUÍAS -->
         <div class="row g-3" id="guideSection">
           <div class="col-md-6">
             <div class="card-custom h-100" id="qualityCard">
@@ -287,7 +177,7 @@
         </div>
       </div>
 
-      <!-- ---------- COLUMNA DERECHA (HISTORIAL) ---------- -->
+      <!-- HISTORIAL -->
       <div class="col-lg-4 history-col" id="historySection">
         <div class="card-custom">
           <div class="d-flex justify-content-between align-items-center mb-2">
@@ -301,7 +191,6 @@
     </div>
   </main>
 
-  <!-- ==================== PIE DE PÁGINA ==================== -->
   <footer class="text-center py-3">&copy; 2024 NetPulse Pro</footer>
 
   <!-- ==================== SCRIPTS EXTERNOS ==================== -->
@@ -323,24 +212,14 @@
       /* ===== TRADUCCIONES ===== */
       const T = {
         es: {
-          start: 'INICIAR TEST',
-          starting: 'Conectando...',
-          ping: 'Midiendo ping',
-          dl: 'Descargando',
-          ul: 'Subiendo',
-          done: 'Completado',
-          err: 'Error',
-          nohist: 'Sin resultados'
+          start: 'INICIAR TEST', starting: 'Conectando...',
+          ping: 'Midiendo ping', dl: 'Descargando', ul: 'Subiendo',
+          done: 'Completado', err: 'Error', nohist: 'Sin resultados'
         },
         en: {
-          start: 'START TEST',
-          starting: 'Connecting...',
-          ping: 'Testing ping',
-          dl: 'Downloading',
-          ul: 'Uploading',
-          done: 'Complete',
-          err: 'Error',
-          nohist: 'No results'
+          start: 'START TEST', starting: 'Connecting...',
+          ping: 'Testing ping', dl: 'Downloading', ul: 'Uploading',
+          done: 'Complete', err: 'Error', nohist: 'No results'
         }
       };
       const t = k => T[lang][k];
@@ -349,15 +228,24 @@
       const setText = (id, txt) => $(id).textContent = txt;
       const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-      /* ===== FUNCIONES DEL TEST REAL ===== */
+      /* ===== BARRA DE PROGRESO ===== */
+      function showProgress(show) {
+        $('progressWrapper').hidden = !show;
+      }
+      function updateProgress(percent) {
+        $('progressBar').style.width = percent + '%';
+      }
+
+      /* ===== TEST REAL MEJORADO ===== */
       async function runTest() {
         const btn = $('startBtn');
         const gauge = $('gauge');
         btn.disabled = true;
         btn.textContent = t('starting');
         gauge.classList.add('active');
+        showProgress(false);
 
-        ['pingVal', 'dlVal', 'ulVal', 'mainSpeed'].forEach(id => setText(id, '--'));
+        ['pingVal','dlVal','ulVal','mainSpeed'].forEach(id => setText(id, '--'));
         setText('testStatus', '');
 
         let ping = 0, dl = 0, ul = 0, ok = 0;
@@ -368,29 +256,33 @@
           ping = await pingTest(4);
           setText('pingVal', ping.toFixed(0));
           ok++;
-        } catch {
-          setText('pingVal', 'Err');
-        }
+        } catch { setText('pingVal', 'Err'); }
 
-        // Fase 2: Descarga
+        // Fase 2: Descarga multihilo
         try {
-          setText('testStatus', t('dl') + '...');
-          dl = await downloadTest();
+          setText('testStatus', t('dl') + ' (4 hilos)...');
+          showProgress(true);
+          dl = await multiDownload(4, 50_000_000); // 4 hilos x 50 MB
           setText('dlVal', dl.toFixed(1));
           setText('mainSpeed', dl.toFixed(0));
           ok++;
         } catch {
           setText('dlVal', 'Err');
+        } finally {
+          showProgress(false);
         }
 
         // Fase 3: Subida
         try {
           setText('testStatus', t('ul') + '...');
-          ul = await uploadTest();
+          showProgress(true);
+          ul = await uploadTest(10_000_000); // 10 MB
           setText('ulVal', ul.toFixed(1));
           ok++;
         } catch {
           setText('ulVal', 'N/D');
+        } finally {
+          showProgress(false);
         }
 
         gauge.classList.remove('active');
@@ -412,27 +304,41 @@
         for (let i = 0; i < n; i++) {
           const start = performance.now();
           await fetch('https://speed.cloudflare.com/__down?bytes=0', {
-            method: 'HEAD',
-            cache: 'no-store'
+            method: 'HEAD', cache: 'no-store'
           });
           total += performance.now() - start;
         }
         return total / n;
       }
 
-      async function downloadTest() {
+      // Descarga multihilo con barra de progreso real
+      async function multiDownload(threads, sizePerThread) {
+        const totalBytes = threads * sizePerThread;
+        let completedThreads = 0;
+
+        // Actualiza la barra cada vez que un hilo termina
+        const downloadOne = async () => {
+          const resp = await fetch(`https://speed.cloudflare.com/__down?bytes=${sizePerThread}`, {
+            cache: 'no-store'
+          });
+          await resp.arrayBuffer(); // asegura descarga completa
+          completedThreads++;
+          updateProgress((completedThreads / threads) * 100);
+        };
+
         const start = performance.now();
-        const resp = await fetch('https://speed.cloudflare.com/__down?bytes=10000000', {
-          cache: 'no-store'
-        });
-        await resp.arrayBuffer();
+        // Lanza todos los hilos en paralelo
+        await Promise.all(Array.from({ length: threads }, downloadOne));
         const sec = (performance.now() - start) / 1000;
-        return (10000000 * 8) / sec / 1e6; // Mbps
+        const bits = totalBytes * 8;
+        return (bits / sec) / 1e6; // Mbps
       }
 
-      async function uploadTest() {
-        const data = new Uint8Array(1000000);
-        for (let i = 0; i < 1000000; i++) data[i] = Math.random() * 256;
+      // Subida simple (un solo hilo) con barra indeterminada
+      async function uploadTest(size) {
+        const data = new Uint8Array(size);
+        for (let i = 0; i < size; i++) data[i] = Math.random() * 256;
+
         const start = performance.now();
         const resp = await fetch('https://speed.cloudflare.com/__up', {
           method: 'POST',
@@ -441,7 +347,8 @@
         });
         await resp.text();
         const sec = (performance.now() - start) / 1000;
-        return (1000000 * 8) / sec / 1e6;
+        const bits = size * 8;
+        return (bits / sec) / 1e6;
       }
 
       /* ===== ACTUALIZACIÓN DE UI ===== */
@@ -457,15 +364,13 @@
 
         $('streamBar').style.width = (sl * 25) + '%';
         $('gameBar').style.width = (gl * 33.33) + '%';
-        $('streamBar').textContent = speed > 0 ? ['', 'SD', 'HD', '4K', '4K/8K'][sl] : '--';
-        $('gameBar').textContent = speed > 0 ? ['', 'MALO', 'REGULAR', 'ÓPTIMO'][gl] : '--';
+        $('streamBar').textContent = speed > 0 ? ['','SD','HD','4K','4K/8K'][sl] : '--';
+        $('gameBar').textContent = speed > 0 ? ['','MALO','REGULAR','ÓPTIMO'][gl] : '--';
 
-        // Resaltar la fila correspondiente en la guía de calidad
         document.querySelectorAll('#qualityTable tbody tr').forEach((tr, i) => {
           tr.classList.toggle('table-active',
             (speed >= 25 && i === 3) || (speed >= 15 && speed < 25 && i === 2) ||
-            (speed >= 5 && speed < 15 && i === 1) || (speed > 0 && speed < 5 && i === 0)
-          );
+            (speed >= 5 && speed < 15 && i === 1) || (speed > 0 && speed < 5 && i === 0));
         });
       }
 
@@ -509,7 +414,6 @@
         `).join('');
       }
 
-      // Expuesta para el onclick en el historial
       window._copy = i => {
         const r = history[i];
         navigator.clipboard.writeText(`⬇${r.download}Mbps ⬆${r.upload}Mbps Ping ${r.ping}ms`);
@@ -570,28 +474,24 @@
         localStorage.setItem(LANG_KEY, lang);
         $('langToggle').textContent = lang === 'es' ? '🌐 ES' : '🌐 EN';
         $('startBtn').textContent = t('start');
-        renderHistory(); // actualiza el texto "sin resultados"
+        renderHistory();
       }
 
       /* ===== INICIALIZACIÓN ===== */
       document.addEventListener('DOMContentLoaded', () => {
-        // Cargar datos guardados
         history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
         if (localStorage.getItem(DARK_KEY) === 'true') document.body.classList.add('light-mode');
         const savedLang = localStorage.getItem(LANG_KEY);
         if (savedLang === 'en' || savedLang === 'es') lang = savedLang;
 
-        // Aplicar idioma
         $('langToggle').textContent = lang === 'es' ? '🌐 ES' : '🌐 EN';
         $('startBtn').textContent = t('start');
 
-        // Inicializar componentes
         renderHistory();
         initChart();
         detectISP();
         updateUI(0);
 
-        // Eventos
         $('startBtn').addEventListener('click', runTest);
         $('themeToggle').addEventListener('click', toggleTheme);
         $('langToggle').addEventListener('click', toggleLang);
