@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
+  <!-- ==================== FAVICON LOCAL ==================== -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  
   <!-- ==================== SEO META TAGS OPTIMIZADOS ==================== -->
   <title>Test de Velocidad de Internet - Mide Ping, Jitter y Fibra Óptica</title>
   <meta name="description" content="Prueba de velocidad de internet precisa y gratuita. Mide tu descarga, carga, latencia (ping) y jitter en segundos. Optimizado para fibra óptica, WiFi y 5G. Sin apps.">
@@ -155,6 +159,23 @@
       color: var(--accent);
       font-weight: 600;
     }
+
+    /* Títulos de secciones ahora son H2 o H3, heredan estilos de card-custom */
+    .card-custom h2, .card-custom h3, .card-custom h4 {
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .card-custom h2 i, .card-custom h3 i {
+      margin-right: 0.5rem;
+    }
+
+    /* Mantener estilo de los encabezados en modales */
+    .modal-header .modal-title {
+      font-weight: 600;
+      color: inherit;
+    }
   </style>
 </head>
 <body>
@@ -167,11 +188,11 @@
     <span class="navbar-brand-centered"><i class="bi bi-speedometer2 me-2"></i>NetPulse Pro</span>
     <div style="width:80px;"></div>
   </nav>
+
   <main class="container py-4">
-  <!-- Encabezado H1 invisible para SEO (necesario para estructura semántica) -->
-  <h1 class="visually-hidden">Test de Velocidad de Internet - Mide Ping, Jitter y Fibra Óptica</h1>
-  <div class="exitlag-banner">
-  <main class="container py-4">
+    <!-- Encabezado H1 invisible para SEO (estructura semántica) -->
+    <h1 class="visually-hidden">Test de Velocidad de Internet - Mide Ping, Jitter y Fibra Óptica</h1>
+
     <div class="exitlag-banner">
       <div class="exitlag-text">🎮 <strong>¿Cansado del lag?</strong><small>ExitLag optimiza tu conexión con rutas inteligentes. ¡Pruébalo!</small></div>
       <a href="https://www.exitlag.com/aff.php?aff=10282839" target="_blank" rel="nofollow sponsored" class="btn-exitlag">⚡ Prueba ExitLag</a>
@@ -210,17 +231,23 @@
         </div>
 
         <!-- Análisis inteligente -->
-        <div class="card-custom" id="analysisCard" style="display:none;"><h6><i class="bi bi-cpu me-2"></i>Análisis inteligente</h6><div id="analysisContent"></div></div>
+        <div class="card-custom" id="analysisCard" style="display:none;"><h2 class="h6"><i class="bi bi-cpu me-2"></i>Análisis inteligente</h2><div id="analysisContent"></div></div>
 
         <!-- Comparativa nacional -->
-        <div class="card-custom" id="comparisonCard" style="display:none;"><h6><i class="bi bi-globe me-2"></i>Comparativa nacional</h6><div id="comparisonContent"></div></div>
+        <div class="card-custom" id="comparisonCard" style="display:none;"><h2 class="h6"><i class="bi bi-globe me-2"></i>Comparativa nacional</h2><div id="comparisonContent"></div></div>
 
         <!-- Capacidad del enlace -->
-        <div class="card-custom"><h6>Capacidad del enlace</h6><small>Streaming</small><div class="progress mb-2"><div class="progress-bar" id="streamBar">--</div></div><small>Gaming</small><div class="progress"><div class="progress-bar" id="gameBar">--</div></div></div>
+        <div class="card-custom">
+          <h2 class="h6">Capacidad del enlace</h2>
+          <small>Streaming</small>
+          <div class="progress mb-2"><div class="progress-bar" id="streamBar">--</div></div>
+          <small>Gaming</small>
+          <div class="progress"><div class="progress-bar" id="gameBar">--</div></div>
+        </div>
 
         <!-- Tabla de aplicaciones -->
         <div class="card-custom">
-          <h6><i class="bi bi-phone me-2"></i>Requerimientos de apps populares</h6>
+          <h2 class="h6"><i class="bi bi-phone me-2"></i>Requerimientos de apps populares</h2>
           <table class="table table-sm table-borderless small mb-0">
             <thead><tr><th>Aplicación</th><th>Calidad</th><th>Descarga</th><th>Subida</th><th>Tu conexión</th></tr></thead>
             <tbody>
@@ -259,7 +286,7 @@
 
       <div class="col-lg-4 history-col">
         <div class="card-custom">
-          <div class="d-flex justify-content-between align-items-center mb-2"><h6>Historial</h6><div><button class="btn btn-outline btn-sm me-1" id="exportCsvBtn"><i class="bi bi-download"></i></button><button class="btn btn-outline btn-sm" id="clearHistBtn">Borrar</button></div></div>
+          <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h6 mb-0">Historial</h2><div><button class="btn btn-outline btn-sm me-1" id="exportCsvBtn"><i class="bi bi-download"></i></button><button class="btn btn-outline btn-sm" id="clearHistBtn">Borrar</button></div></div>
           <ul class="list-group small mb-3" id="historyList" style="max-height:200px;overflow-y:auto;"></ul>
           <canvas id="speedChart" height="80"></canvas>
         </div>
@@ -268,9 +295,43 @@
   </main>
   <footer class="text-center py-3">&copy; 2026 NetPulse Pro · Test de velocidad real</footer>
 
-  <!-- Modales -->
-  <div class="modal fade" id="gamingModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);"><div class="modal-header"><h6>🎮 Gaming Hub (pings reales)</h6><button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);"></button></div><div class="modal-body"><ul class="list-group list-group-flush small"><li class="list-group-item d-flex justify-content-between">League of Legends <span id="pingLol">-- ms</span></li><li class="list-group-item d-flex justify-content-between">Call of Duty <span id="pingCod">-- ms</span></li><li class="list-group-item d-flex justify-content-between">GTA V Online <span id="pingGta">-- ms</span></li></ul></div></div></div></div>
-  <div class="modal fade" id="shareModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);"><div class="modal-header"><h6>Compartir</h6><button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);"></button></div><div class="modal-body text-center"><div id="sharePreview" class="mb-3 p-3" style="background:var(--bg1);border-radius:1rem;"></div><div class="d-flex gap-2 flex-wrap justify-content-center"><button class="btn btn-outline btn-sm" id="downloadImageBtn"><i class="bi bi-image"></i></button><button class="btn btn-outline btn-sm" id="copyResultBtn"><i class="bi bi-clipboard"></i></button><button class="btn btn-outline btn-sm" id="shareTwitterBtn"><i class="bi bi-twitter"></i></button><button class="btn btn-outline btn-sm" id="shareWhatsAppBtn"><i class="bi bi-whatsapp"></i></button></div></div></div></div></div>
+  <!-- Modales con títulos semánticos -->
+  <div class="modal fade" id="gamingModal" tabindex="-1" aria-labelledby="gamingModalTitle">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);">
+        <div class="modal-header">
+          <h2 class="modal-title h6" id="gamingModalTitle">🎮 Gaming Hub (pings reales)</h2>
+          <button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">League of Legends <span id="pingLol">-- ms</span></li>
+            <li class="list-group-item d-flex justify-content-between">Call of Duty <span id="pingCod">-- ms</span></li>
+            <li class="list-group-item d-flex justify-content-between">GTA V Online <span id="pingGta">-- ms</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalTitle">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);">
+        <div class="modal-header">
+          <h2 class="modal-title h6" id="shareModalTitle">Compartir</h2>
+          <button class="btn-close" data-bs-dismiss="modal" style="filter:invert(0.5);" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div id="sharePreview" class="mb-3 p-3" style="background:var(--bg1);border-radius:1rem;"></div>
+          <div class="d-flex gap-2 flex-wrap justify-content-center">
+            <button class="btn btn-outline btn-sm" id="downloadImageBtn"><i class="bi bi-image"></i></button>
+            <button class="btn btn-outline btn-sm" id="copyResultBtn"><i class="bi bi-clipboard"></i></button>
+            <button class="btn btn-outline btn-sm" id="shareTwitterBtn"><i class="bi bi-twitter"></i></button>
+            <button class="btn btn-outline btn-sm" id="shareWhatsAppBtn"><i class="bi bi-whatsapp"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
