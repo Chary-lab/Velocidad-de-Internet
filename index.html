@@ -3,20 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NetPulse Pro · Test de Velocidad</title>
-  <meta name="description" content="Test de velocidad de internet gratuito. Mide ping, jitter, descarga y subida con análisis inteligente.">
-  <meta name="keywords" content="speed test, velocidad internet, ping, descarga, subida, gaming, streaming">
+  
+  <!-- ==================== SEO META TAGS OPTIMIZADOS ==================== -->
+  <title>Test de Velocidad de Internet - Mide Ping, Jitter y Fibra Óptica</title>
+  <meta name="description" content="Prueba de velocidad de internet precisa y gratuita. Mide tu descarga, carga, latencia (ping) y jitter en segundos. Optimizado para fibra óptica, WiFi y 5G. Sin apps.">
+  <meta name="keywords" content="test de velocidad, velocidad de internet, speedtest, medir ping, test jitter, prueba de fibra optica, mi internet es lento, bajar ping, lag en juegos, bufferbloat">
+  <meta name="author" content="NetPulse Pro">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://chary-lab.github.io/Velocidad-de-Internet/">
-  <meta property="og:title" content="NetPulse Pro · Test de Velocidad">
-  <meta property="og:description" content="Test de velocidad real con análisis inteligente.">
+  
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:title" content="¿Tu internet es lento? Haz este Test de Velocidad Real">
+  <meta property="og:description" content="Herramienta gratuita para medir la calidad de tu conexión. Descubre si tu proveedor te da los megas que pagas.">
   <meta property="og:url" content="https://chary-lab.github.io/Velocidad-de-Internet/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="NetPulse Pro">
+  
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"NetPulse Pro","description":"Test de velocidad de internet gratuito","applicationCategory":"UtilityApplication","offers":{"@type":"Offer","price":"0"}}</script>
+  <meta name="twitter:title" content="Test de Velocidad de Internet - Mide Ping, Jitter y Fibra Óptica">
+  <meta name="twitter:description" content="Prueba de velocidad gratuita. Mide descarga, carga, latencia y jitter. Optimizado para fibra, WiFi y 5G.">
+
+  <!-- ==================== DATOS ESTRUCTURADOS (JSON-LD) MEJORADOS ==================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Test de Velocidad NetPulse Pro",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Herramienta web gratuita para medir el rendimiento de la conexión a internet, incluyendo velocidad de descarga, carga, latencia (ping) y jitter.",
+    "featureList": ["Ping Test", "Jitter Measurement", "Download Speed", "Upload Speed", "Bufferbloat", "Gaming Hub"],
+    "inLanguage": ["es", "en"]
+  }
+  </script>
+
+  <!-- PWA Manifest -->
   <link rel="manifest" href="data:application/manifest+json,{"name":"NetPulse Pro","short_name":"NetPulse","start_url":".","display":"standalone","background_color":"#0a0e27","theme_color":"#00c3ff","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2300c3ff'/%3E%3Ctext x='50' y='70' text-anchor='middle' font-size='80' fill='white'%3E⚡%3C/text%3E%3C/svg%3E","sizes":"100x100","type":"image/svg+xml"}]}">
 
+  <!-- ==================== ESTILOS EXTERNOS ==================== -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+  <!-- ==================== ESTILOS PERSONALIZADOS (PALETA EXITLAG) ==================== -->
   <style>
     :root {
       --bg1: #0a0e27; --bg2: #1a1040; --bg3: #0d1b2a;
@@ -93,12 +128,33 @@
     footer { opacity: 0.6; font-size: 0.8rem; }
     canvas { max-height: 180px; }
     #liveSpeedChart { height: 80px; }
-    /* PWA install button */
     .pwa-install-btn { display: none; }
     @media (display-mode: browser) {
       .pwa-install-btn { display: inline-block; }
     }
     @media (min-width: 992px) { .history-col { position: sticky; top: 1rem; } }
+
+    /* Estilos para la sección FAQ */
+    .faq-section h2, .faq-section h3 {
+      color: var(--accent);
+    }
+    .faq-section h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .faq-section p, .faq-section li {
+      line-height: 1.7;
+      opacity: 0.95;
+    }
+    .faq-section hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+    .faq-section strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -173,6 +229,29 @@
             </tbody>
           </table>
         </div>
+
+        <!-- ==================== SECCIÓN DE PREGUNTAS FRECUENTES (FAQ) PARA SEO ==================== -->
+        <section class="card-custom faq-section" aria-labelledby="faq-heading">
+          <h2 id="faq-heading"><i class="bi bi-question-circle me-2"></i>Preguntas Frecuentes sobre el Test de Velocidad de Internet</h2>
+          <p>¿Quieres saber si tu conexión de <strong>fibra óptica</strong> o <strong>WiFi</strong> funciona correctamente? Nuestra herramienta mide en tiempo real la calidad de tu red para que verifiques si tu proveedor (ISP) te está entregando los megas que pagas.</p>
+
+          <hr>
+
+          <h3>1. ¿Qué es la velocidad de descarga y carga?</h3>
+          <p>La <strong>velocidad de descarga</strong> es la rapidez con la que los datos llegan a tu dispositivo (ver películas en Netflix, bajar archivos). La <strong>velocidad de carga</strong> es lo que tardas en enviar datos (subir fotos a Instagram, enviar correos). Para una experiencia fluida, busca siempre una conexión simétrica.</p>
+
+          <h3>2. ¿Por qué es importante el Ping (Latencia)?</h3>
+          <p>El <strong>Ping</strong> mide el tiempo de respuesta de tu conexión en milisegundos (ms). Si eres gamer, un ping bajo (menos de 50ms) es vital para evitar el lag. Si notas que tu ping es muy alto, podrías tener problemas de enrutamiento.</p>
+
+          <h3>3. ¿Qué es el Jitter y cómo afecta mi conexión?</h3>
+          <p>El <strong>Jitter</strong> mide la variabilidad del ping. Un jitter alto causa cortes en videollamadas (Zoom, Teams) y tirones en juegos online. Un valor ideal de jitter debe ser inferior a 5ms.</p>
+
+          <h3>4. ¿Cómo bajar el ping y mejorar el lag en juegos?</h3>
+          <p>Si tu test de velocidad muestra un ping inestable, asegúrate de usar cable Ethernet en lugar de WiFi. Si el problema persiste, existen servicios de optimización de rutas como <strong>ExitLag</strong>, que redirigen tu tráfico por caminos más cortos hacia los servidores de juego, reduciendo drásticamente el lag y las desconexiones.</p>
+
+          <h3>5. ¿Por qué mi test de velocidad da menos de lo contratado?</h3>
+          <p>Varios factores influyen: la distancia al router, tener muchos dispositivos conectados, o cables antiguos (CAT5 en lugar de CAT6). Realiza siempre la prueba de velocidad conectado por cable para obtener el resultado más preciso de tu <strong>fibra óptica</strong>.</p>
+        </section>
       </div>
 
       <div class="col-lg-4 history-col">
@@ -209,7 +288,7 @@
     (()=>{
       const $=id=>document.getElementById(id), HISTORY_KEY='nphist', DARK_KEY='npdark', LANG_KEY='nplang';
       let history=[], lang='es', chart, liveChart, isFast=false, lastResult=null;
-      let deferredPrompt; // para instalación PWA
+      let deferredPrompt;
 
       const T={es:{start:'INICIAR TEST',starting:'Conectando...',ping:'Midiendo ping',dl:'Descargando',ul:'Subiendo',done:'Completado',err:'Error',nohist:'Sin resultados',excellent:'Excelente',good:'Bueno',regular:'Regular',low:'Bajo',streaming:'Streaming',gaming:'Gaming',recommendations:'Recomendaciones',optimal:'Óptima',adequate:'Adecuada',insufficient:'Insuficiente',rec_excellent:'Conexión excelente para teletrabajo, streaming 4K/8K y gaming.',rec_good:'Conexión sólida. Streaming 4K y gaming con buena respuesta.',rec_regular:'Conexión funcional. HD bien, 4K puede tener cortes.',rec_low:'Conexión limitada. Gaming sufrirá lag.',rec_high_jitter:'Jitter alto. Prueba cable Ethernet.',rec_low_upload:'Subida baja. Videollamadas lentas.',rec_high_ping:'Ping alto para gaming.',bufferbloat:'Latencia bajo carga',loaded_ping:'Ping bajo carga',idle_ping:'Ping en reposo',fast_mode:'Modo rápido (5s)',share_text:'Mi velocidad: ⬇{download} Mbps ⬆{upload} Mbps, Ping {ping} ms. ¡Mídela en NetPulse Pro!',wifi:'Wi‑Fi',ethernet:'Ethernet',cellular:'Móvil',unknown:'Desconocida',yes:'Sí',no:'No'},
         en:{start:'START TEST',starting:'Connecting...',ping:'Testing ping',dl:'Downloading',ul:'Uploading',done:'Complete',err:'Error',nohist:'No results',excellent:'Excellent',good:'Good',regular:'Regular',low:'Low',streaming:'Streaming',gaming:'Gaming',recommendations:'Recommendations',optimal:'Optimal',adequate:'Adequate',insufficient:'Insufficient',rec_excellent:'Excellent connection for remote work, 4K streaming, and gaming.',rec_good:'Solid connection. 4K streaming and gaming ok.',rec_regular:'Functional. HD ok, 4K may buffer.',rec_low:'Limited. Gaming will lag.',rec_high_jitter:'High jitter. Try Ethernet.',rec_low_upload:'Low upload.',rec_high_ping:'High ping for gaming.',bufferbloat:'Bufferbloat',loaded_ping:'Loaded ping',idle_ping:'Idle ping',fast_mode:'Fast mode (5s)',share_text:'My speed: ⬇{download} Mbps ⬆{upload} Mbps, Ping {ping} ms. Test yours at NetPulse Pro!',wifi:'Wi‑Fi',ethernet:'Ethernet',cellular:'Cellular',unknown:'Unknown',yes:'Yes',no:'No'}};
@@ -243,16 +322,13 @@
           pingCod: 'https://www.callofduty.com',
           pingGta: 'https://www.rockstargames.com'
         };
-        // Intentar medir ping real, si falla usar estimación
         for (let [id, url] of Object.entries(endpoints)) {
           try {
             let start = performance.now();
             await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
             let ping = performance.now() - start;
-            // no-cors da respuesta opaca, pero el tiempo de ida/vuelta sirve
             setText(id, Math.round(ping) + ' ms');
           } catch {
-            // Fallback a estimación basada en basePing
             if (id === 'pingLol') setText(id, Math.round(basePing + random(15,25)) + ' ms');
             else if (id === 'pingCod') setText(id, Math.round(basePing + random(25,40)) + ' ms');
             else if (id === 'pingGta') setText(id, Math.round(basePing + random(35,50)) + ' ms');
@@ -299,7 +375,7 @@
       function detectConnType() {
         const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         if (conn) {
-          const type = conn.type; // 'wifi', 'ethernet', 'cellular', etc.
+          const type = conn.type;
           if (type === 'wifi') return t('wifi');
           if (type === 'ethernet') return t('ethernet');
           if (type === 'cellular') return t('cellular');
@@ -315,7 +391,6 @@
         } catch { setText('ispName', 'No disponible'); }
       }
 
-      // Gestión de instalación PWA
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -337,7 +412,6 @@
           if (saved === 'light') document.body.classList.add('light-mode');
           else document.body.classList.remove('light-mode');
         } else {
-          // preferencia del sistema
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
             document.body.classList.add('light-mode');
           }
