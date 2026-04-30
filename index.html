@@ -9,67 +9,156 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- ==================== ESTILOS PERSONALIZADOS ==================== -->
+  <!-- ==================== ESTILOS PERSONALIZADOS (PALETA VICHY) ==================== -->
   <style>
     :root {
-      --bg: #0b1120; --text: #ffffff; --accent: #3b82f6;
-      --glass: rgba(15,23,42,0.85); --border: rgba(59,130,246,0.4);
-      --card-bg: rgba(0,0,0,0.5); --shadow: 0 8px 32px rgba(0,0,0,0.7);
-      --btn-outline: #fff;
+      --bg-start: #f4f9f4;
+      --bg-end: #e0f0ea;
+      --text: #2d3a3a;
+      --accent: #5ca8a8;
+      --accent-hover: #4a8f8f;
+      --card-bg: #ffffff;
+      --card-border: #c8e0d2;
+      --shadow: 0 8px 24px rgba(0,0,0,0.06);
+      --progress-bg: #dce8e2;
+      --list-bg: #eaf4f0;
+      --btn-outline: #5ca8a8;
+      --gauge-border: #d0e0d6;
     }
-    body.light-mode {
-      --bg: #f1f5f9; --text: #1e293b;
-      --glass: rgba(255,255,255,0.85); --border: rgba(0,0,0,0.15);
-      --card-bg: rgba(255,255,255,0.7); --shadow: 0 8px 32px rgba(0,0,0,0.1);
-      --btn-outline: #1e293b;
+    body.dark-mode {
+      --bg-start: #1a2424;
+      --bg-end: #0d1414;
+      --text: #d0e0d6;
+      --accent: #6fb8b8;
+      --accent-hover: #5ca8a8;
+      --card-bg: #1e2a2a;
+      --card-border: #2e3e3e;
+      --shadow: 0 8px 24px rgba(0,0,0,0.3);
+      --progress-bg: #2d3a3a;
+      --list-bg: #1e2a2a;
+      --btn-outline: #6fb8b8;
+      --gauge-border: #2e3e3e;
     }
-    body {
-      background: linear-gradient(145deg, var(--bg), #1e293b);
-      color: var(--text); font-family: system-ui, sans-serif; margin: 0;
-    }
-    .navbar, .card-custom {
-      background: var(--glass); backdrop-filter: blur(14px);
-      border: 1px solid var(--border); box-shadow: var(--shadow);
-    }
-    .navbar { padding: 0.5rem 1rem; }
-    .card-custom { border-radius: 1.2rem; padding: 1.5rem; margin-bottom: 1.5rem; }
 
-    .gauge-circle {
-      width: 150px; height: 150px; border-radius: 50%;
-      border: 10px solid rgba(255,255,255,0.15); background: var(--card-bg);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; font-weight: 700; margin: 0 auto 1rem;
+    body {
+      background: linear-gradient(145deg, var(--bg-start), var(--bg-end));
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
     }
-    .gauge-circle.active { border-top-color: var(--accent); animation: spin 0.8s linear infinite; }
+
+    .navbar, .card-custom {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+    }
+    .navbar {
+      padding: 0.5rem 1rem;
+      backdrop-filter: blur(8px);
+      background: var(--card-bg);
+    }
+    .navbar .navbar-brand-centered {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 700;
+      font-size: 1.3rem;
+      white-space: nowrap;
+    }
+    .card-custom {
+      border-radius: 1.2rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Medidor */
+    .gauge-circle {
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      border: 10px solid var(--gauge-border);
+      background: var(--card-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700;
+      margin: 0 auto 1rem;
+    }
+    .gauge-circle.active {
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .metric-box { background: var(--card-bg); border-radius: 0.8rem; padding: 0.8rem; text-align: center; }
-    .metric-box .value { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 0.8rem;
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+    }
+    .metric-box .value {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
 
-    .btn-primary { background: var(--accent); border: none; padding: 0.6rem 2rem; border-radius: 2rem; font-weight: 600; }
-    .btn-primary:hover { background: #2563eb; }
+    .btn-primary {
+      background: var(--accent);
+      border: none;
+      padding: 0.6rem 2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      color: white;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
 
-    .btn-outline-light, .btn-outline-dark { border-color: var(--btn-outline); color: var(--btn-outline); }
-    .btn-outline-light:hover, .btn-outline-dark:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-outline-light, .btn-outline-dark {
+      border-color: var(--btn-outline);
+      color: var(--btn-outline);
+      background: transparent;
+    }
+    .btn-outline-light:hover, .btn-outline-dark:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
 
-    .progress { background: rgba(255,255,255,0.2); border-radius: 1rem; height: 20px; }
-    .progress-bar { background: var(--accent); font-size: 0.75rem; line-height: 20px; border-radius: 1rem; color: #fff; }
-    .progress-bar-striped { background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent); background-size: 1rem 1rem; }
+    .progress {
+      background: var(--progress-bg);
+      border-radius: 1rem;
+      height: 20px;
+    }
+    .progress-bar {
+      background: var(--accent);
+      font-size: 0.75rem; line-height: 20px;
+      border-radius: 1rem;
+      color: white;
+    }
+    .progress-bar-striped {
+      background-image: linear-gradient(45deg, rgba(255,255,255,.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.2) 50%, rgba(255,255,255,.2) 75%, transparent 75%, transparent);
+      background-size: 1rem 1rem;
+    }
 
-    .quality-row { transition: all 0.2s ease; border-radius: 0.5rem; }
-    .quality-row:hover { background: rgba(59,130,246,0.08); }
+    .quality-row {
+      transition: all 0.2s ease;
+      border-radius: 0.5rem;
+    }
+    .quality-row:hover { background: rgba(92,168,168,0.08); }
     #qualityTable tbody tr.table-active {
-      background: var(--accent) !important; color: white !important;
-      font-weight: 600; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+      background: var(--accent) !important;
+      color: white !important;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(92,168,168,0.3);
     }
     #qualityTable tbody tr.table-active td:first-child::after { content: ' ✅'; }
 
     .list-group-item {
-      background: var(--card-bg); border: 1px solid var(--border); color: var(--text);
+      background: var(--list-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
     }
-    .list-group-item small, .card-custom small, .metric-box small { color: inherit; opacity: 0.85; }
 
-    footer { opacity: 0.6; font-size: 0.8rem; }
+    footer { opacity: 0.7; font-size: 0.8rem; }
     canvas { max-height: 200px; }
 
     @media (min-width: 992px) {
@@ -80,12 +169,14 @@
 <body>
 
   <!-- ==================== BARRA DE NAVEGACIÓN ==================== -->
-  <nav class="navbar d-flex justify-content-between align-items-center">
-    <span class="fw-bold fs-5"><i class="bi bi-speedometer2 me-2"></i>NetPulse Pro</span>
-    <div>
-      <button class="btn btn-outline-light btn-sm me-1" id="langToggle">🌐 ES</button>
-      <button class="btn btn-outline-light btn-sm" id="themeToggle"><i class="bi bi-moon-stars-fill"></i></button>
+  <nav class="navbar d-flex align-items-center position-relative">
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-dark btn-sm" id="langToggle">🌐 ES</button>
+      <button class="btn btn-outline-dark btn-sm" id="themeToggle"><i class="bi bi-moon-stars-fill"></i></button>
     </div>
+    <span class="navbar-brand-centered"><i class="bi bi-speedometer2 me-2"></i>NetPulse Pro</span>
+    <!-- espacio para simetría -->
+    <div style="width: 80px;"></div>
   </nav>
 
   <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
@@ -95,31 +186,40 @@
     </div>
 
     <div class="row">
+      <!-- Columna izquierda -->
       <div class="col-lg-8">
-        <!-- MEDIDOR PRINCIPAL -->
-        <div class="card-custom text-center" id="testSection">
+        <!-- MEDIDOR -->
+        <div class="card-custom text-center">
           <div class="gauge-circle" id="gauge"><span id="mainSpeed">--</span></div>
           <div class="row g-2 mb-3">
-            <div class="col-4">
+            <div class="col-6 col-md-3">
               <div class="metric-box"><small>PING</small><div class="value" id="pingVal">--</div><small>ms</small></div>
             </div>
-            <div class="col-4">
+            <div class="col-6 col-md-3">
+              <div class="metric-box"><small>JITTER</small><div class="value" id="jitterVal">--</div><small>ms</small></div>
+            </div>
+            <div class="col-6 col-md-3">
               <div class="metric-box"><small>DESCARGA</small><div class="value" id="dlVal">--</div><small>Mbps</small></div>
             </div>
-            <div class="col-4">
+            <div class="col-6 col-md-3">
               <div class="metric-box"><small>SUBIDA</small><div class="value" id="ulVal">--</div><small>Mbps</small></div>
             </div>
           </div>
-          <!-- Barra de progreso dinámica -->
+
           <div class="progress mb-3" style="height: 8px;" id="progressWrapper" hidden>
             <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" style="width: 0%"></div>
           </div>
+
           <button class="btn btn-primary btn-lg" id="startBtn">INICIAR TEST</button>
           <div id="testStatus" class="mt-2 fw-bold small"></div>
+          <!-- Botón Gaming Hub -->
+          <button class="btn btn-outline-dark btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#gamingModal">
+            🎮 Gaming Hub
+          </button>
         </div>
 
         <!-- CAPACIDAD DEL ENLACE -->
-        <div class="card-custom" id="capacitySection">
+        <div class="card-custom">
           <h6 class="mb-2">Capacidad del enlace</h6>
           <div class="mb-2">
             <small>Streaming</small>
@@ -130,266 +230,207 @@
             <div class="progress"><div class="progress-bar" id="gameBar">--</div></div>
           </div>
         </div>
-
-        <!-- GUÍAS -->
-        <div class="row g-3" id="guideSection">
-          <div class="col-md-6">
-            <div class="card-custom h-100" id="qualityCard">
-              <h6 class="mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Guía de Calidad</h6>
-              <div class="table-responsive">
-                <table class="table table-sm table-borderless align-middle mb-0" id="qualityTable">
-                  <thead class="border-bottom">
-                    <tr><th class="ps-2">Calidad</th><th class="text-end pe-2">Velocidad</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr class="quality-row">
-                      <td class="ps-2"><span class="me-2">📺</span> SD</td>
-                      <td class="text-end pe-2">3 Mbps</td>
-                    </tr>
-                    <tr class="quality-row">
-                      <td class="ps-2"><span class="me-2">🎬</span> HD</td>
-                      <td class="text-end pe-2">5 Mbps</td>
-                    </tr>
-                    <tr class="quality-row">
-                      <td class="ps-2"><span class="me-2">🎥</span> 4K Comprimido</td>
-                      <td class="text-end pe-2">15 Mbps</td>
-                    </tr>
-                    <tr class="quality-row">
-                      <td class="ps-2"><span class="me-2">✨</span> 4K / 8K</td>
-                      <td class="text-end pe-2">25 Mbps</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <small class="text-muted d-block mt-2">✅ Resaltado = Calidad óptima para tu conexión</small>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card-custom h-100" id="gamingCard">
-              <h6>Gaming Hub</h6>
-              <ul class="list-group list-group-flush small" id="gameList">
-                <li class="list-group-item d-flex justify-content-between">League of Legends <span>-- ms</span></li>
-                <li class="list-group-item d-flex justify-content-between">Call of Duty <span>-- ms</span></li>
-                <li class="list-group-item d-flex justify-content-between">GTA V Online <span>-- ms</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <!-- HISTORIAL -->
-      <div class="col-lg-4 history-col" id="historySection">
+      <!-- Columna derecha: Historial + Guía de Calidad -->
+      <div class="col-lg-4 history-col">
+        <!-- HISTORIAL -->
         <div class="card-custom">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h6 class="mb-0">Historial</h6>
-            <button class="btn btn-sm btn-outline-light" id="clearHistBtn">Borrar</button>
+            <button class="btn btn-sm btn-outline-dark" id="clearHistBtn">Borrar</button>
           </div>
-          <ul class="list-group small mb-3" id="historyList" style="max-height:200px;overflow-y:auto;"></ul>
+          <ul class="list-group small mb-3" id="historyList" style="max-height:180px;overflow-y:auto;"></ul>
           <canvas id="speedChart" height="80"></canvas>
+        </div>
+
+        <!-- GUÍA DE CALIDAD -->
+        <div class="card-custom">
+          <h6 class="mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Guía de Calidad</h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-borderless align-middle mb-0" id="qualityTable">
+              <thead class="border-bottom">
+                <tr><th class="ps-2">Calidad</th><th class="text-end pe-2">Velocidad</th></tr>
+              </thead>
+              <tbody>
+                <tr class="quality-row"><td class="ps-2">📺 SD</td><td class="text-end pe-2">3 Mbps</td></tr>
+                <tr class="quality-row"><td class="ps-2">🎬 HD</td><td class="text-end pe-2">5 Mbps</td></tr>
+                <tr class="quality-row"><td class="ps-2">🎥 4K Comprimido</td><td class="text-end pe-2">15 Mbps</td></tr>
+                <tr class="quality-row"><td class="ps-2">✨ 4K / 8K</td><td class="text-end pe-2">25 Mbps</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <small class="text-muted d-block mt-2">✅ Resaltado = Calidad óptima para tu conexión</small>
         </div>
       </div>
     </div>
   </main>
 
-  <footer class="text-center py-3">&copy; 2024 NetPulse Pro</footer>
+  <!-- ==================== MODAL GAMING HUB ==================== -->
+  <div class="modal fade" id="gamingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="background: var(--card-bg); color: var(--text); border: 1px solid var(--card-border);">
+        <div class="modal-header">
+          <h6 class="modal-title">🎮 Gaming Hub (pings estimados)</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(0.5);"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">League of Legends <span id="pingLol">-- ms</span></li>
+            <li class="list-group-item d-flex justify-content-between">Call of Duty <span id="pingCod">-- ms</span></li>
+            <li class="list-group-item d-flex justify-content-between">GTA V Online <span id="pingGta">-- ms</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3">&copy; 2026 NetPulse Pro</footer>
 
   <!-- ==================== SCRIPTS EXTERNOS ==================== -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- ==================== LÓGICA DE LA APLICACIÓN ==================== -->
+  <!-- ==================== LÓGICA ==================== -->
   <script>
     (() => {
-      /* ===== CONFIGURACIÓN ===== */
       const $ = id => document.getElementById(id);
-      const HISTORY_KEY = 'nphist';
-      const DARK_KEY = 'npdark';
-      const LANG_KEY = 'nplang';
-      let history = [];
-      let lang = 'es';
-      let chart;
+      const HISTORY_KEY = 'nphist', DARK_KEY = 'npdark', LANG_KEY = 'nplang';
+      let history = [], lang = 'es', chart;
 
-      /* ===== TRADUCCIONES ===== */
       const T = {
-        es: {
-          start: 'INICIAR TEST', starting: 'Conectando...',
-          ping: 'Midiendo ping', dl: 'Descargando', ul: 'Subiendo',
-          done: 'Completado', err: 'Error', nohist: 'Sin resultados'
-        },
-        en: {
-          start: 'START TEST', starting: 'Connecting...',
-          ping: 'Testing ping', dl: 'Downloading', ul: 'Uploading',
-          done: 'Complete', err: 'Error', nohist: 'No results'
-        }
+        es: { start:'INICIAR TEST', starting:'Conectando...', ping:'Midiendo ping', dl:'Descargando', ul:'Subiendo', done:'Completado', err:'Error', nohist:'Sin resultados' },
+        en: { start:'START TEST', starting:'Connecting...', ping:'Testing ping', dl:'Downloading', ul:'Uploading', done:'Complete', err:'Error', nohist:'No results' }
       };
       const t = k => T[lang][k];
 
-      /* ===== UTILIDADES ===== */
       const setText = (id, txt) => $(id).textContent = txt;
       const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-      /* ===== BARRA DE PROGRESO ===== */
-      function showProgress(show) {
-        $('progressWrapper').hidden = !show;
-      }
-      function updateProgress(percent) {
-        $('progressBar').style.width = percent + '%';
-      }
+      function showProgress(show) { $('progressWrapper').hidden = !show; }
+      function updateProgress(percent) { $('progressBar').style.width = percent + '%'; }
 
-      /* ===== TEST REAL MEJORADO ===== */
+      // Test real (con jitter)
       async function runTest() {
-        const btn = $('startBtn');
-        const gauge = $('gauge');
-        btn.disabled = true;
-        btn.textContent = t('starting');
-        gauge.classList.add('active');
-        showProgress(false);
-
-        ['pingVal','dlVal','ulVal','mainSpeed'].forEach(id => setText(id, '--'));
+        const btn = $('startBtn'), gauge = $('gauge');
+        btn.disabled = true; btn.textContent = t('starting');
+        gauge.classList.add('active'); showProgress(false);
+        ['pingVal','jitterVal','dlVal','ulVal','mainSpeed'].forEach(id => setText(id, '--'));
         setText('testStatus', '');
 
-        let ping = 0, dl = 0, ul = 0, ok = 0;
+        let ping = 0, jitter = 0, dl = 0, ul = 0, ok = 0;
 
-        // Fase 1: Ping
+        // Ping + jitter
         try {
           setText('testStatus', t('ping') + '...');
-          ping = await pingTest(4);
+          const { avg, jitter: jit } = await pingTestWithJitter(6);
+          ping = avg;
+          jitter = jit;
           setText('pingVal', ping.toFixed(0));
+          setText('jitterVal', jitter.toFixed(1));
           ok++;
-        } catch { setText('pingVal', 'Err'); }
+        } catch {
+          setText('pingVal', 'Err');
+          setText('jitterVal', 'Err');
+        }
 
-        // Fase 2: Descarga multihilo
+        // Descarga
         try {
           setText('testStatus', t('dl') + ' (4 hilos)...');
           showProgress(true);
-          dl = await multiDownload(4, 50_000_000); // 4 hilos x 50 MB
+          dl = await multiDownload(4, 50000000);
           setText('dlVal', dl.toFixed(1));
           setText('mainSpeed', dl.toFixed(0));
           ok++;
-        } catch {
-          setText('dlVal', 'Err');
-        } finally {
-          showProgress(false);
-        }
+        } catch { setText('dlVal','Err'); } finally { showProgress(false); }
 
-        // Fase 3: Subida
+        // Subida
         try {
           setText('testStatus', t('ul') + '...');
           showProgress(true);
-          ul = await uploadTest(10_000_000); // 10 MB
+          ul = await uploadTest(10000000);
           setText('ulVal', ul.toFixed(1));
           ok++;
-        } catch {
-          setText('ulVal', 'N/D');
-        } finally {
-          showProgress(false);
-        }
+        } catch { setText('ulVal','N/D'); } finally { showProgress(false); }
 
         gauge.classList.remove('active');
-        btn.disabled = false;
-        btn.textContent = t('start');
+        btn.disabled = false; btn.textContent = t('start');
         setText('testStatus', ok >= 2 ? t('done') : t('err'));
 
         if (ok >= 2) {
-          saveResult(ping, dl, ul);
+          saveResult(ping, jitter, dl, ul);
           updateUI(dl);
           updateGamePings(ping);
-        } else {
-          updateUI(0);
-        }
+        } else updateUI(0);
       }
 
-      async function pingTest(n) {
-        let total = 0;
-        for (let i = 0; i < n; i++) {
+      async function pingTestWithJitter(attempts) {
+        const times = [];
+        for (let i = 0; i < attempts; i++) {
           const start = performance.now();
-          await fetch('https://speed.cloudflare.com/__down?bytes=0', {
-            method: 'HEAD', cache: 'no-store'
-          });
-          total += performance.now() - start;
+          await fetch('https://speed.cloudflare.com/__down?bytes=0', { method:'HEAD', cache:'no-store' });
+          times.push(performance.now() - start);
         }
-        return total / n;
+        const avg = times.reduce((a,b) => a+b, 0) / times.length;
+        const variance = times.reduce((a,b) => a + (b-avg)**2, 0) / times.length;
+        const jitter = Math.sqrt(variance); // desviación estándar como jitter
+        return { avg, jitter };
       }
 
-      // Descarga multihilo con barra de progreso real
-      async function multiDownload(threads, sizePerThread) {
-        const totalBytes = threads * sizePerThread;
-        let completedThreads = 0;
-
-        // Actualiza la barra cada vez que un hilo termina
-        const downloadOne = async () => {
-          const resp = await fetch(`https://speed.cloudflare.com/__down?bytes=${sizePerThread}`, {
-            cache: 'no-store'
-          });
-          await resp.arrayBuffer(); // asegura descarga completa
-          completedThreads++;
-          updateProgress((completedThreads / threads) * 100);
+      async function multiDownload(threads, size) {
+        let completed = 0;
+        const dlOne = async () => {
+          const resp = await fetch(`https://speed.cloudflare.com/__down?bytes=${size}`, { cache:'no-store' });
+          await resp.arrayBuffer();
+          completed++;
+          updateProgress((completed/threads)*100);
         };
-
         const start = performance.now();
-        // Lanza todos los hilos en paralelo
-        await Promise.all(Array.from({ length: threads }, downloadOne));
+        await Promise.all(Array.from({ length: threads }, dlOne));
         const sec = (performance.now() - start) / 1000;
-        const bits = totalBytes * 8;
-        return (bits / sec) / 1e6; // Mbps
+        return (threads * size * 8) / sec / 1e6;
       }
 
-      // Subida simple (un solo hilo) con barra indeterminada
       async function uploadTest(size) {
         const data = new Uint8Array(size);
-        for (let i = 0; i < size; i++) data[i] = Math.random() * 256;
-
+        for (let i=0; i<size; i++) data[i] = Math.random()*256;
         const start = performance.now();
-        const resp = await fetch('https://speed.cloudflare.com/__up', {
-          method: 'POST',
-          body: new Blob([data]),
-          cache: 'no-store'
-        });
+        const resp = await fetch('https://speed.cloudflare.com/__up', { method:'POST', body:new Blob([data]), cache:'no-store' });
         await resp.text();
         const sec = (performance.now() - start) / 1000;
-        const bits = size * 8;
-        return (bits / sec) / 1e6;
+        return (size * 8) / sec / 1e6;
       }
 
-      /* ===== ACTUALIZACIÓN DE UI ===== */
       function updateUI(speed) {
-        let sl = 0, gl = 0;
-        if (speed >= 25) sl = 4;
-        else if (speed >= 15) sl = 3;
-        else if (speed >= 5) sl = 2;
-        else if (speed > 0) sl = 1;
-        if (speed >= 15) gl = 3;
-        else if (speed >= 5) gl = 2;
-        else if (speed > 0) gl = 1;
-
-        $('streamBar').style.width = (sl * 25) + '%';
-        $('gameBar').style.width = (gl * 33.33) + '%';
-        $('streamBar').textContent = speed > 0 ? ['','SD','HD','4K','4K/8K'][sl] : '--';
-        $('gameBar').textContent = speed > 0 ? ['','MALO','REGULAR','ÓPTIMO'][gl] : '--';
-
-        document.querySelectorAll('#qualityTable tbody tr').forEach((tr, i) => {
+        let sl=0, gl=0;
+        if(speed>=25) sl=4; else if(speed>=15) sl=3; else if(speed>=5) sl=2; else if(speed>0) sl=1;
+        if(speed>=15) gl=3; else if(speed>=5) gl=2; else if(speed>0) gl=1;
+        $('streamBar').style.width = (sl*25)+'%';
+        $('gameBar').style.width = (gl*33.33)+'%';
+        $('streamBar').textContent = speed>0 ? ['','SD','HD','4K','4K/8K'][sl] : '--';
+        $('gameBar').textContent = speed>0 ? ['','MALO','REGULAR','ÓPTIMO'][gl] : '--';
+        document.querySelectorAll('#qualityTable tbody tr').forEach((tr,i) => {
           tr.classList.toggle('table-active',
-            (speed >= 25 && i === 3) || (speed >= 15 && speed < 25 && i === 2) ||
-            (speed >= 5 && speed < 15 && i === 1) || (speed > 0 && speed < 5 && i === 0));
+            (speed>=25&&i===3)||(speed>=15&&speed<25&&i===2)||
+            (speed>=5&&speed<15&&i===1)||(speed>0&&speed<5&&i===0)
+          );
         });
       }
 
       function updateGamePings(basePing) {
-        const items = document.querySelectorAll('#gameList li span');
-        if (items.length) {
-          items[0].textContent = Math.round(basePing + random(15, 25)) + ' ms';
-          items[1].textContent = Math.round(basePing + random(25, 40)) + ' ms';
-          items[2].textContent = Math.round(basePing + random(35, 50)) + ' ms';
-        }
+        $('pingLol').textContent = Math.round(basePing + random(15,25)) + ' ms';
+        $('pingCod').textContent = Math.round(basePing + random(25,40)) + ' ms';
+        $('pingGta').textContent = Math.round(basePing + random(35,50)) + ' ms';
       }
 
-      /* ===== HISTORIAL ===== */
-      function saveResult(p, d, u) {
+      // Historial (incluye jitter)
+      function saveResult(ping, jitter, dl, ul) {
         history.unshift({
           date: new Date().toISOString(),
-          ping: +p.toFixed(0),
-          download: +d.toFixed(1),
-          upload: +u.toFixed(1)
+          ping: +ping.toFixed(0),
+          jitter: +jitter.toFixed(1),
+          download: +dl.toFixed(1),
+          upload: +ul.toFixed(1)
         });
         if (history.length > 10) history.pop();
         localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
@@ -403,20 +444,16 @@
           list.innerHTML = `<li class="list-group-item">${t('nohist')}</li>`;
           return;
         }
-        list.innerHTML = history.map((r, i) => `
+        list.innerHTML = history.map((r,i) => `
           <li class="list-group-item d-flex justify-content-between align-items-center py-1">
             <span>${new Date(r.date).toLocaleString()}</span>
-            <span>⬇${r.download} ⬆${r.upload} 🕒${r.ping}ms</span>
-            <button class="btn btn-sm btn-outline-light py-0" onclick="window._copy(${i})">
-              <i class="bi bi-clipboard"></i>
-            </button>
-          </li>
-        `).join('');
+            <span>⬇${r.download} ⬆${r.upload} 🕒${r.ping}ms ~${r.jitter}ms</span>
+            <button class="btn btn-sm btn-outline-dark py-0" onclick="window._copy(${i})"><i class="bi bi-clipboard"></i></button>
+          </li>`).join('');
       }
-
       window._copy = i => {
         const r = history[i];
-        navigator.clipboard.writeText(`⬇${r.download}Mbps ⬆${r.upload}Mbps Ping ${r.ping}ms`);
+        navigator.clipboard.writeText(`⬇${r.download}Mbps ⬆${r.upload}Mbps Ping ${r.ping}ms Jitter ${r.jitter}ms`);
       };
 
       function clearHistory() {
@@ -426,24 +463,19 @@
         updateChart();
       }
 
-      /* ===== GRÁFICO ===== */
       function initChart() {
         chart = new Chart($('speedChart'), {
           type: 'line',
           data: {
             labels: [],
             datasets: [
-              { label: 'Descarga', data: [], borderColor: '#3b82f6' },
-              { label: 'Subida', data: [], borderColor: '#f97316' }
+              { label:'Descarga', data:[], borderColor:'#5ca8a8' },
+              { label:'Subida', data:[], borderColor:'#f4a261' }
             ]
           },
-          options: {
-            responsive: true,
-            plugins: { legend: { labels: { color: 'inherit' } } }
-          }
+          options: { responsive:true, plugins:{ legend:{ labels:{ color:'inherit' } } } }
         });
       }
-
       function updateChart() {
         if (!chart) return;
         chart.data.labels = history.map(r => new Date(r.date).toLocaleTimeString());
@@ -452,23 +484,18 @@
         chart.update();
       }
 
-      /* ===== DETECCIÓN DEL ISP ===== */
       async function detectISP() {
         try {
           const r = await fetch('https://ipwho.is/');
           const d = await r.json();
           setText('ispName', d.connection?.isp || d.connection?.org || 'Desconocido');
-        } catch {
-          setText('ispName', 'No disponible');
-        }
+        } catch { setText('ispName', 'No disponible'); }
       }
 
-      /* ===== TEMA E IDIOMA ===== */
       function toggleTheme() {
-        document.body.classList.toggle('light-mode');
-        localStorage.setItem(DARK_KEY, document.body.classList.contains('light-mode'));
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem(DARK_KEY, document.body.classList.contains('dark-mode'));
       }
-
       function toggleLang() {
         lang = lang === 'es' ? 'en' : 'es';
         localStorage.setItem(LANG_KEY, lang);
@@ -477,13 +504,11 @@
         renderHistory();
       }
 
-      /* ===== INICIALIZACIÓN ===== */
       document.addEventListener('DOMContentLoaded', () => {
         history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-        if (localStorage.getItem(DARK_KEY) === 'true') document.body.classList.add('light-mode');
+        if (localStorage.getItem(DARK_KEY) === 'true') document.body.classList.add('dark-mode');
         const savedLang = localStorage.getItem(LANG_KEY);
         if (savedLang === 'en' || savedLang === 'es') lang = savedLang;
-
         $('langToggle').textContent = lang === 'es' ? '🌐 ES' : '🌐 EN';
         $('startBtn').textContent = t('start');
 
