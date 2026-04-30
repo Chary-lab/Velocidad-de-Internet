@@ -70,6 +70,14 @@
             border-bottom: 1px solid rgba(255,255,255,0.05) !important; 
             padding: 10px !important; 
             font-size: 0.8rem; 
+            transition: background 0.3s;
+        }
+
+        /* Fila resaltada en la guía */
+        .reference-table tr.table-active td {
+            background: rgba(59, 130, 246, 0.15) !important;
+            font-weight: bold;
+            color: white !important;
         }
 
         .progress { 
@@ -81,6 +89,7 @@
         .progress-bar-custom { 
             background: linear-gradient(90deg, #0ea5e9, #22c55e); 
             border-radius: 10px; 
+            transition: width 0.5s ease, background 0.5s;
         }
 
         .label-text { 
@@ -237,28 +246,30 @@
                 </div>
             </div>
 
-            <div class="glass-card text-start">
+            <!-- CAPACIDAD DEL ENLACE (Ahora dinámico) -->
+            <div class="glass-card text-start" id="capacidadEnlace">
                 <h6 class="label-text text-primary mb-3">Capacidad del Enlace</h6>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between small">
                         <span class="text-white">Streaming 4K / 8K</span>
-                        <span class="text-success fw-bold">ÓPTIMO</span>
+                        <span id="streamingLabel" class="fw-bold">--</span>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-custom" style="width: 100%"></div>
+                        <div id="streamingBar" class="progress-bar progress-bar-custom" style="width: 0%"></div>
                     </div>
                 </div>
                 <div>
                     <div class="d-flex justify-content-between small">
                         <span class="text-white">Gaming Competitivo</span>
-                        <span class="text-warning fw-bold">EXCELENTE</span>
+                        <span id="gamingLabel" class="fw-bold">--</span>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-custom" style="width: 90%; background: #eab308"></div>
+                        <div id="gamingBar" class="progress-bar progress-bar-custom" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
+            <!-- Tarjetas de diagnóstico -->
             <div class="row g-2 mb-3 text-start">
                 <div class="col-4">
                     <div class="diag-card">
@@ -283,9 +294,10 @@
                 </div>
             </div>
 
+            <!-- GUÍA DE CALIDAD (Ahora con resaltado dinámico) -->
             <div class="glass-card p-3">
                 <h6 class="label-text text-primary mb-3 text-start">Guía de Calidad</h6>
-                <table class="table reference-table mb-0">
+                <table class="table reference-table mb-0" id="tablaGuia">
                     <thead>
                         <tr>
                             <th>Estado</th>
@@ -294,17 +306,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr id="filaOptima">
                             <td><span class="badge bg-success">ÓPTIMO</span></td>
                             <td>+50 Mbps</td>
                             <td>4K & Gaming Pro</td>
                         </tr>
-                        <tr>
+                        <tr id="filaRegular">
                             <td><span class="badge bg-warning text-dark">REGULAR</span></td>
                             <td>20-50 Mbps</td>
                             <td>HD / Oficina</td>
                         </tr>
-                        <tr>
+                        <tr id="filaMala">
                             <td><span class="badge bg-danger">MALA</span></td>
                             <td>&lt; 20 Mbps</td>
                             <td>Básico / Chat</td>
@@ -319,7 +331,7 @@
     </div>
 </div>
 
-<!-- Modal Gaming -->
+<!-- Modal Gaming (Pings dinámicos) -->
 <div class="modal fade" id="gameModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered px-4">
         <div class="modal-content shadow-lg">
@@ -330,15 +342,15 @@
             <div class="modal-body text-white">
                 <div class="d-flex justify-content-between mb-2">
                     <span>League of Legends</span>
-                    <span class="badge bg-success">25 ms</span>
+                    <span id="pingLoL" class="badge bg-secondary">--</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span>Call of Duty</span>
-                    <span class="badge bg-success">48 ms</span>
+                    <span id="pingCoD" class="badge bg-secondary">--</span>
                 </div>
                 <div class="d-flex justify-content-between">
                     <span>GTA V RP</span>
-                    <span class="badge bg-info">32 ms</span>
+                    <span id="pingGTA" class="badge bg-secondary">--</span>
                 </div>
             </div>
         </div>
@@ -348,52 +360,177 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // ==========================================
-    // CÓDIGO PRINCIPAL INTEGRADO
+    // VARIABLES GLOBALES Y ESTADO
     // ==========================================
-    
-    // Gestión de historial en LocalStorage
     const resultsHistory = JSON.parse(localStorage.getItem('resultsHistory')) || [];
     let testInterval = null;
     let currentSpeed = 0;
+    let currentPing = 0; // Para actualizar el gaming hub
 
+    // ==========================================
+    // FUNCIONES DE ACTUALIZACIÓN DINÁMICA
+    // ==========================================
+    
+    /** Actualiza la sección "Capacidad del Enlace" */
+    function updateCapacidadEnlace(downloadSpeedMbps) {
+        const speed = parseFloat(downloadSpeedMbps);
+        const streamingLabel = document.getElementById('streamingLabel');
+        const streamingBar = document.getElementById('streamingBar');
+        const gamingLabel = document.getElementById('gamingLabel');
+        const gamingBar = document.getElementById('gamingBar');
+        
+        if (!streamingLabel || !gamingLabel) return;
+        
+        let streamingQuality, streamingPercent, streamingClass;
+        let gamingQuality, gamingPercent, gamingClass;
+        
+        if (speed >= 50) {
+            streamingQuality = 'ÓPTIMO';
+            streamingPercent = 100;
+            streamingClass = 'text-success';
+            gamingQuality = 'EXCELENTE';
+            gamingPercent = 90;
+            gamingClass = 'text-warning';
+        } else if (speed >= 20) {
+            streamingQuality = 'REGULAR';
+            streamingPercent = 50;
+            streamingClass = 'text-warning';
+            gamingQuality = 'ACEPTABLE';
+            gamingPercent = 40;
+            gamingClass = 'text-warning';
+        } else {
+            streamingQuality = 'MALO';
+            streamingPercent = 20;
+            streamingClass = 'text-danger';
+            gamingQuality = 'NO RECOMENDADO';
+            gamingPercent = 10;
+            gamingClass = 'text-danger';
+        }
+        
+        // Etiquetas
+        streamingLabel.textContent = streamingQuality;
+        streamingLabel.className = `fw-bold ${streamingClass}`;
+        gamingLabel.textContent = gamingQuality;
+        gamingLabel.className = `fw-bold ${gamingClass}`;
+        
+        // Barras
+        streamingBar.style.width = streamingPercent + '%';
+        gamingBar.style.width = gamingPercent + '%';
+        
+        // Colores de barra según calidad
+        if (speed >= 50) {
+            streamingBar.style.background = 'linear-gradient(90deg, #0ea5e9, #22c55e)';
+            gamingBar.style.background = 'linear-gradient(90deg, #0ea5e9, #eab308)';
+        } else if (speed >= 20) {
+            streamingBar.style.background = 'linear-gradient(90deg, #f59e0b, #eab308)';
+            gamingBar.style.background = '#eab308';
+        } else {
+            streamingBar.style.background = '#ef4444';
+            gamingBar.style.background = '#dc2626';
+        }
+    }
+
+    /** Resalta la fila correcta en la Guía de Calidad */
+    function updateGuiaCalidad(downloadSpeedMbps) {
+        const speed = parseFloat(downloadSpeedMbps);
+        const filaOptima = document.getElementById('filaOptima');
+        const filaRegular = document.getElementById('filaRegular');
+        const filaMala = document.getElementById('filaMala');
+        
+        if (!filaOptima || !filaRegular || !filaMala) return;
+        
+        // Quitar resaltado previo
+        [filaOptima, filaRegular, filaMala].forEach(fila => {
+            fila.classList.remove('table-active');
+        });
+        
+        // Aplicar resaltado según velocidad
+        if (speed >= 50) {
+            filaOptima.classList.add('table-active');
+        } else if (speed >= 20) {
+            filaRegular.classList.add('table-active');
+        } else {
+            filaMala.classList.add('table-active');
+        }
+    }
+
+    /** Actualiza los pings del Gaming Hub basados en el ping general medido */
+    function updateGamingPings(pingMs) {
+        const pingLoL = document.getElementById('pingLoL');
+        const pingCoD = document.getElementById('pingCoD');
+        const pingGTA = document.getElementById('pingGTA');
+        
+        if (!pingLoL || !pingCoD || !pingGTA) return;
+        
+        // Simulamos pings a servidores específicos sumando/restando latencia
+        const basePing = parseInt(pingMs) || 0;
+        if (basePing === 0) {
+            pingLoL.textContent = '--';
+            pingLoL.className = 'badge bg-secondary';
+            pingCoD.textContent = '--';
+            pingCoD.className = 'badge bg-secondary';
+            pingGTA.textContent = '--';
+            pingGTA.className = 'badge bg-secondary';
+            return;
+        }
+        
+        // Ajustes ficticios por servidor (podrías hacerlos más realistas)
+        const lolPing = Math.max(5, basePing + Math.floor(Math.random() * 5) - 2);
+        const codPing = Math.max(5, basePing + Math.floor(Math.random() * 15) + 10);
+        const gtaPing = Math.max(5, basePing + Math.floor(Math.random() * 8));
+        
+        // Función helper para asignar color de badge según ping
+        const getBadgeClass = (ping) => {
+            if (ping < 30) return 'bg-success';
+            if (ping < 60) return 'bg-warning text-dark';
+            return 'bg-danger';
+        };
+        
+        pingLoL.textContent = lolPing + ' ms';
+        pingLoL.className = 'badge ' + getBadgeClass(lolPing);
+        pingCoD.textContent = codPing + ' ms';
+        pingCoD.className = 'badge ' + getBadgeClass(codPing);
+        pingGTA.textContent = gtaPing + ' ms';
+        pingGTA.className = 'badge ' + getBadgeClass(gtaPing);
+    }
+
+    // ==========================================
+    // GESTIÓN DE HISTORIAL Y GRÁFICO
+    // ==========================================
     function saveResult(result) {
         resultsHistory.push(result);
-        if (resultsHistory.length > 10) resultsHistory.shift(); // Mantener solo 10
+        if (resultsHistory.length > 10) resultsHistory.shift();
         localStorage.setItem('resultsHistory', JSON.stringify(resultsHistory));
         displayResultsHistory();
         updateChart();
     }
 
     function displayResultsHistory() {
-        const historyContainer = document.getElementById('results-history');
-        if (!historyContainer) return;
+        const container = document.getElementById('results-history');
+        if (!container) return;
         
-        historyContainer.innerHTML = '';
+        container.innerHTML = '';
         if (resultsHistory.length > 0) {
-            historyContainer.style.display = 'block';
+            container.style.display = 'block';
             resultsHistory.slice(-5).forEach(result => {
-                const resultElement = document.createElement('div');
-                resultElement.innerHTML = `
+                const div = document.createElement('div');
+                div.innerHTML = `
                     <span>${result.timestamp}</span> - 
                     <strong>${result.speed} Mbps</strong> | 
                     Ping: ${result.ping} | 
-                    <i class="bi bi-clipboard cursor-pointer" onclick="copySpecificResult('${result.speed} Mbps')"></i>
+                    <i class="bi bi-clipboard" style="cursor:pointer" onclick="copySpecificResult('${result.speed} Mbps')"></i>
                 `;
-                historyContainer.appendChild(resultElement);
+                container.appendChild(div);
             });
         }
     }
 
-    // Gráfico con Chart.js
     let chart;
     function renderChart(data) {
         const ctx = document.getElementById('results-chart');
         if (!ctx) return;
-        
         const context = ctx.getContext('2d');
-        if (chart) {
-            chart.destroy();
-        }
+        if (chart) chart.destroy();
         chart = new Chart(context, {
             type: 'line',
             data: {
@@ -423,9 +560,7 @@
                     }
                 },
                 plugins: {
-                    legend: { 
-                        labels: { color: '#f8fafc' }
-                    }
+                    legend: { labels: { color: '#f8fafc' } }
                 }
             }
         });
@@ -433,52 +568,36 @@
 
     function updateChart() {
         if (resultsHistory.length > 0) {
-            const data = {
+            renderChart({
                 labels: resultsHistory.map(r => r.timestamp),
                 values: resultsHistory.map(r => parseFloat(r.speed))
-            };
-            renderChart(data);
+            });
         }
     }
 
-    // Modo oscuro
+    // ==========================================
+    // MODO OSCURO, IDIOMA, COPIAR
+    // ==========================================
     const toggleDarkMode = () => {
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
         localStorage.setItem('darkMode', isDark);
-        
         const btn = document.getElementById('darkModeBtn');
-        if (btn) {
-            btn.innerHTML = isDark ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
-        }
+        if (btn) btn.innerHTML = isDark ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
     };
 
-    // Cargar preferencia de modo oscuro
-    if (localStorage.getItem('darkMode') === 'true') {
-        toggleDarkMode();
-    }
+    if (localStorage.getItem('darkMode') === 'true') toggleDarkMode();
 
-    // Selector de idioma
     let currentLanguage = 'es';
     const translations = {
         es: {
             title: 'NetPulse Pro | Test de Velocidad',
             startBtn: 'INICIAR ANÁLISIS',
-            download: 'MBPS DOWNLOAD',
-            ping: 'Ping',
-            upload: 'Subida',
-            jitter: 'Jitter',
-            loss: 'Pérdida',
             privacy: 'Respetamos tu privacidad. Los resultados se almacenan localmente.'
         },
         en: {
             title: 'NetPulse Pro | Speed Test',
             startBtn: 'START ANALYSIS',
-            download: 'MBPS DOWNLOAD',
-            ping: 'Ping',
-            upload: 'Upload',
-            jitter: 'Jitter',
-            loss: 'Loss',
             privacy: 'We respect your privacy. Results are stored locally.'
         }
     };
@@ -486,34 +605,21 @@
     const changeLanguage = (language) => {
         currentLanguage = language;
         const t = translations[language];
-        
         document.title = t.title;
         const runBtn = document.getElementById('runBtn');
         if (runBtn) runBtn.textContent = t.startBtn;
-        
         document.getElementById('privacy-message').innerText = t.privacy;
-        
-        // Actualizar labels
-        const labels = document.querySelectorAll('.label-text');
-        if (labels.length >= 4) {
-            // Actualizar según el orden: Ping, Subida, Jitter, Pérdida
-        }
     };
 
-    // Copiar resultado
     const copyResult = () => {
         const speed = document.getElementById('speedValue').innerText;
         const ping = document.getElementById('pPing').innerText;
-        const textToCopy = `Velocidad: ${speed} Mbps | Ping: ${ping}`;
-        
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            // Feedback visual
+        const text = `Velocidad: ${speed} Mbps | Ping: ${ping}`;
+        navigator.clipboard.writeText(text).then(() => {
             const copyBtn = document.getElementById('copyBtn');
-            const originalHTML = copyBtn.innerHTML;
+            const orig = copyBtn.innerHTML;
             copyBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
-            setTimeout(() => {
-                copyBtn.innerHTML = originalHTML;
-            }, 1500);
+            setTimeout(() => { copyBtn.innerHTML = orig; }, 1500);
         });
     };
 
@@ -521,17 +627,9 @@
         navigator.clipboard.writeText(text);
     }
 
-    // Mensaje de privacidad
-    document.getElementById('privacy-message').innerText = 
-        translations[currentLanguage].privacy;
-
-    // Cálculo de pérdida de paquetes
-    function calculatePacketLoss(sent, received) {
-        if (sent === 0) return 0;
-        return ((sent - received) / sent) * 100;
-    }
-
-    // Obtener ISP
+    // ==========================================
+    // ISP Y CÁLCULO DE PÉRDIDA DE PAQUETES
+    // ==========================================
     async function getISP() {
         try {
             const res = await fetch('https://ipapi.co/json/');
@@ -544,7 +642,14 @@
         }
     }
 
-    // Función principal del test
+    function calculatePacketLoss(sent, received) {
+        if (sent === 0) return 0;
+        return ((sent - received) / sent) * 100;
+    }
+
+    // ==========================================
+    // TEST DE VELOCIDAD (SIMULADO)
+    // ==========================================
     function runTest() {
         const btn = document.getElementById('runBtn');
         const speedVal = document.getElementById('speedValue');
@@ -553,27 +658,26 @@
         if (testInterval) {
             clearInterval(testInterval);
             testInterval = null;
-            btn.textContent = 'INICIAR ANÁLISIS';
+            btn.textContent = translations[currentLanguage].startBtn;
             btn.classList.remove('btn-danger');
             btn.classList.add('btn-primary');
             return;
         }
         
-        // Resetear valores
         currentSpeed = 0;
         speedVal.innerText = '0.0';
         document.getElementById('pPing').innerText = '--';
         document.getElementById('pUp').innerText = '--';
         document.getElementById('pJitter').innerText = '--';
         document.getElementById('pLoss').innerText = '0%';
+        copyBtn.disabled = true;
         
         btn.textContent = 'DETENER';
         btn.classList.remove('btn-primary');
         btn.classList.add('btn-danger');
-        copyBtn.disabled = true;
         
-        const targetSpeed = 65 + Math.random() * 15; // Entre 65 y 80 Mbps
-        const ping = 20 + Math.floor(Math.random() * 30);
+        const targetSpeed = 65 + Math.random() * 15;
+        currentPing = 20 + Math.floor(Math.random() * 30);
         const jitter = Math.floor(Math.random() * 5) + 1;
         const uploadSpeed = (targetSpeed * 0.3) + Math.random() * 5;
         const packetLoss = Math.random() * 0.5;
@@ -586,11 +690,10 @@
                 testInterval = null;
                 currentSpeed = targetSpeed;
                 
-                // Guardar resultado
                 const result = {
                     timestamp: new Date().toLocaleTimeString(),
                     speed: currentSpeed.toFixed(1),
-                    ping: ping + 'ms',
+                    ping: currentPing + 'ms',
                     upload: uploadSpeed.toFixed(1),
                     jitter: jitter + 'ms',
                     loss: packetLoss.toFixed(1) + '%'
@@ -604,7 +707,12 @@
                 document.getElementById('pJitter').innerText = result.jitter;
                 document.getElementById('pLoss').innerText = result.loss;
                 
-                btn.textContent = 'NUEVO ANÁLISIS';
+                // ***** NUEVAS ACTUALIZACIONES DINÁMICAS *****
+                updateCapacidadEnlace(result.speed);
+                updateGuiaCalidad(result.speed);
+                updateGamingPings(currentPing);
+                
+                btn.textContent = translations[currentLanguage].startBtn;
                 btn.classList.remove('btn-danger');
                 btn.classList.add('btn-primary');
                 copyBtn.disabled = false;
@@ -614,19 +722,25 @@
         }, 100);
     }
 
-    // Inicialización
+    // ==========================================
+    // INICIALIZACIÓN
+    // ==========================================
     getISP();
     displayResultsHistory();
     if (resultsHistory.length > 0) updateChart();
-    
-    // Cargar idioma guardado o usar español por defecto
     changeLanguage(localStorage.getItem('language') || 'es');
     
-    // Guardar preferencia de idioma
+    // Sobrescribir changeLanguage para guardar preferencia
+    const origChangeLanguage = changeLanguage;
     window.changeLanguage = (lang) => {
-        changeLanguage(lang);
+        origChangeLanguage(lang);
         localStorage.setItem('language', lang);
     };
+    
+    // Inicializar capacidades en "--" y gaming en "--"
+    updateCapacidadEnlace(0);
+    updateGuiaCalidad(0);
+    updateGamingPings(0);
 </script>
 </body>
 </html>
