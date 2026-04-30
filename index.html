@@ -245,13 +245,13 @@
       }
 
       function updateGamePings(base) {
-        const items = document.querySelectorAll('#gameList li span');
-        if (items.length) {
-          items[0].textContent = (base + random(15, 25)) + ' ms';
-          items[1].textContent = (base + random(25, 40)) + ' ms';
-          items[2].textContent = (base + random(35, 50)) + ' ms';
-        }
+      const items = document.querySelectorAll('#gameList li span');
+       if (items.length) {
+      items[0].textContent = Math.round(base + random(15, 25)) + ' ms';
+      items[1].textContent = Math.round(base + random(25, 40)) + ' ms';
+      items[2].textContent = Math.round(base + random(35, 50)) + ' ms';
       }
+        }
 
       function saveResult(p, d, u) {
         history.unshift({ date: new Date().toISOString(), ping: +p.toFixed(0), download: +d.toFixed(1), upload: +u.toFixed(1) });
